@@ -2,10 +2,26 @@
   "name": "@geocine/add-skill",
   "version": "0.1.0",
   "description": "geocine skills installer",
+  "scripts": {
+    "build": "node scripts/bundle-cli.js",
+    "prepublishOnly": "npm run build"
+  },
   "bin": {
     "add-skill": "bin/add-skill.js"
   },
+  "files": [
+    "bin/",
+    "skills/",
+    "src/",
+    "skills.json",
+    "README.md"
+  ],
   "dependencies": {
+    "ink": "^3.2.0",
+    "react": "^17.0.2"
+  },
+  "devDependencies": {
+    "esbuild": "^0.20.2",
     "prompts": "^2.4.2"
   }
 }
