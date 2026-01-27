@@ -1,0 +1,11 @@
+{
+  "name": "@geocine/add-skill",
+  "version": "0.1.0",
+  "description": "geocine skills installer",
+  "bin": {
+    "add-skill": "bin/add-skill.js"
+  },
+  "dependencies": {
+    "prompts": "^2.4.2"
+  }
+}
