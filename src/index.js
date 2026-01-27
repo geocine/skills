@@ -57,9 +57,10 @@ async function runList(options) {
   console.log('Available skills:');
   for (const skill of skills) {
     const short = skill.shortDescription || '';
-    const repository = skill.repository || 'any';
+    const repository = skill.repository && skill.repository !== 'any' ? skill.repository : '';
     const suffix = short ? ` - ${short}` : '';
-    console.log(` - ${skill.name}${suffix} [${repository}]`);
+    const repoSuffix = repository ? ` [${repository}]` : '';
+    console.log(` - ${skill.name}${suffix}${repoSuffix}`);
   }
 }
 

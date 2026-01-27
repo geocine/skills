@@ -216,7 +216,7 @@ function SkillSelect({ skills, initialSelected, onSelect, showDetails }) {
             const actualIdx = startIdx + idx;
             const isCursor = actualIdx === cursor;
             const isSelected = selected.has(skill.name);
-            const repo = skill.repository || 'Any';
+            const repo = skill.repository && skill.repository !== 'any' ? skill.repository : '';
             
             return (
               <Box key={skill.name} flexDirection="column">
@@ -232,9 +232,13 @@ function SkillSelect({ skills, initialSelected, onSelect, showDetails }) {
                     query={filter} 
                     baseColor={isCursor ? 'white' : 'gray'} 
                   />
-                  <Text color="#f6d3c4"> [</Text>
-                  <HighlightText text={repo} query={filter} baseColor="#f6d3c4" />
-                  <Text color="#f6d3c4">]</Text>
+                  {repo ? (
+                    <>
+                      <Text color="#f6d3c4"> [</Text>
+                      <HighlightText text={repo} query={filter} baseColor="#f6d3c4" />
+                      <Text color="#f6d3c4">]</Text>
+                    </>
+                  ) : null}
                 </Box>
                 {(isCursor || filterMode || showDescriptions) && skill.shortDescription ? (
                   <Box marginLeft={6}>
