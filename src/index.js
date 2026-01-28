@@ -5,6 +5,7 @@ const path = require('path');
 const os = require('os');
 const { spawnSync } = require('child_process');
 const defaultRepoURL = 'https://github.com/geocine/geocine-skills.git';
+const expectedPackageName = readPackageName(path.resolve(__dirname, '..')) || '@geocine/add-skill';
 let promptsModule = null;
 
 function usage() {
@@ -189,7 +190,7 @@ async function resolveRepoRoot(options) {
 function findRepoRootUp(start) {
   let dir = start;
   while (true) {
-    if (dirHasSkills(dir)) {
+    if (dirHasSkills(dir) && dirHasRepoMarkers(dir)) {
       return dir;
     }
     const parent = path.dirname(dir);
@@ -206,6 +207,17 @@ function dirHasSkills(root) {
     return true;
   }
   return dirHasSkillEntries(root);
+}
+
+function dirHasRepoMarkers(root) {
+  if (pathExists(path.join(root, 'skills.json'))) {
+    return true;
+  }
+  const pkgName = readPackageName(root);
+  if (pkgName && pkgName === expectedPackageName) {
+    return true;
+  }
+  return false;
 }
 
 function dirHasSkillEntries(base) {
@@ -488,19 +500,6 @@ function applyListFilter(skills, options) {
   });
 }
 
-function formatChoiceDescription(skill, options) {
-  const repository = skill.repository || 'any';
-  const base = options.details
-    ? (skill.description || '')
-    : (skill.shortDescription || '');
-
-  if (!base) {
-    return `Repo: ${repository}`;
-  }
-
-  return `${base} (Repo: ${repository})`;
-}
-
 function loadSkillsJson(repoRoot) {
   const skillsFile = path.join(repoRoot, 'skills.json');
   if (!pathExists(skillsFile)) {
@@ -622,14 +621,18 @@ function unquote(value) {
   return value;
 }
 
-function promptText(message, initial) {
-  const prompts = loadPrompts();
-  return prompts({
-    type: 'text',
-    name: 'value',
-    message,
-    initial,
-  }, { onCancel }).then((res) => res.value || '');
+function readPackageName(root) {
+  const pkgFile = path.join(root, 'package.json');
+  if (!pathExists(pkgFile)) {
+    return '';
+  }
+  try {
+    const raw = fs.readFileSync(pkgFile, 'utf8');
+    const data = JSON.parse(raw);
+    return typeof data.name === 'string' ? data.name : '';
+  } catch (error) {
+    return '';
+  }
 }
 
 function promptYesNo(message, initial) {
@@ -640,16 +643,6 @@ function promptYesNo(message, initial) {
     message,
     initial,
   }, { onCancel }).then((res) => Boolean(res.value));
-}
-
-function runGit(cwd, args) {
-  const result = spawnSync('git', args, { stdio: 'inherit', cwd: cwd || undefined });
-  if (result.error) {
-    throw result.error;
-  }
-  if (result.status !== 0) {
-    throw new Error('git command failed');
-  }
 }
 
 async function runGitWithProgress(cwd, args, message) {
