@@ -1,7 +1,8 @@
 {
-  "name": "@geocine/add-skill",
+  "name": "@geocine/skills",
   "version": "0.1.3",
   "description": "geocine skills installer",
+  "license": "MIT",
   "scripts": {
     "build": "node scripts/bundle-cli.js",
     "prepublishOnly": "npm run build"
@@ -9,11 +10,15 @@
   "bin": {
     "add-skill": "bin/add-skill.js"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "files": [
     "bin/",
     "skills/",
     "src/",
     "skills.json",
+    "LICENSE",
     "README.md"
   ],
   "dependencies": {

@@ -5,11 +5,11 @@ const path = require('path');
 const os = require('os');
 const { spawnSync } = require('child_process');
 const defaultRepoURL = 'https://github.com/geocine/geocine-skills.git';
-const expectedPackageName = readPackageName(path.resolve(__dirname, '..')) || '@geocine/add-skill';
+const expectedPackageName = readPackageName(path.resolve(__dirname, '..')) || '@geocine/skills';
 let promptsModule = null;
 
 function usage() {
-  console.log('@geocine/add-skill');
+  console.log('@geocine/skills');
   console.log('');
   console.log('Commands:');
   console.log('  install   Interactive install (default)');
