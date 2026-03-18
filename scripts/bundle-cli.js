@@ -6,8 +6,8 @@ const path = require('path');
 const esbuild = require('esbuild');
 
 const repoRoot = path.resolve(__dirname, '..');
-const entry = path.join(repoRoot, 'src', 'index.js');
-const outFile = path.join(repoRoot, 'bin', 'add-skill.js');
+const entry = path.join(repoRoot, 'src', 'skills.js');
+const outFile = path.join(repoRoot, 'bin', 'skills.js');
 
 if (!fs.existsSync(entry)) {
   console.error(`Missing entry file: ${entry}`);
@@ -22,15 +22,14 @@ esbuild.build({
   platform: 'node',
   target: ['node18'],
   outfile: outFile,
-  jsx: 'transform',
-  loader: { '.js': 'jsx' },
-  external: ['ink', 'react'],
+  format: 'cjs',
+  loader: { '.js': 'js' },
   banner: {
     js: [
       '#!/usr/bin/env node',
       '/*',
       ' * This file is generated. Do not edit directly.',
-      ' * Edit src/index.js and run `npm run build` to rebuild.',
+      ' * Edit the source entrypoint and run `npm run build` to rebuild.',
       ' */'
     ].join('\n')
   },
@@ -38,7 +37,7 @@ esbuild.build({
 }).then(() => {
   try {
     fs.chmodSync(outFile, 0o755);
-  } catch (err) {
+  } catch {
     // chmod may fail on some Windows setups; ignore.
   }
 }).catch((err) => {
