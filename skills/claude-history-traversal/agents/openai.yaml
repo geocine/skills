@@ -1,0 +1,4 @@
+interface:
+  display_name: "Claude Code History Traversal"
+  short_description: "Traverse and filter Claude Code session history"
+  default_prompt: "Use $claude-history-traversal to extract Claude Code session history for a project folder."
