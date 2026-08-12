@@ -5,7 +5,22 @@ const os = require('os');
 const path = require('path');
 const { runGit } = require('./git');
 
-const EXTERNAL_SKILLS = [];
+const EXTERNAL_SKILLS = [
+  {
+    name: 'planpack',
+    description:
+      'Bootstrap and operate a planpack — a portable, git-versioned planning pack (graph wiki + comments) shared between humans and LLM agents, dropped into any repository as a planpack/ folder. Use when the user says planpack, planning pack, plan graph, wants a shared planning/brainstorming space with an LLM, asks to set up planpack in a repo, or asks to resolve plan comments / open questions in a planpack.',
+    shortDescription: 'Bootstrap a shared planning pack (graph wiki + comments)',
+    repository: 'any',
+    author: 'geocine',
+    external: {
+      repoUrl: 'https://github.com/geocine/planpack.git',
+      ref: 'main',
+      // SKILL.md lives at the repo root; template/ must ship with the skill.
+      path: '.',
+    },
+  },
+];
 
 function cloneExternalSkill(skill) {
   return {
@@ -51,10 +66,10 @@ async function materializeSkillSources(skills, deps = {}) {
       checkoutRepoGroup(group, checkoutDir, deps);
 
       for (const skill of group.skills) {
-        const skillPath = path.join(checkoutDir, ...skill.external.path.split('/'));
+        const skillPath = resolveExternalSkillPath(checkoutDir, skill.external.path);
         if (!fs.existsSync(path.join(skillPath, 'SKILL.md'))) {
           throw new Error(
-            `External skill "${skill.name}" was not found at ${skill.external.url || skill.external.path}.`
+            `External skill "${skill.name}" was not found at ${skill.external.repoUrl || skill.external.path}.`
           );
         }
 
@@ -103,26 +118,44 @@ function checkoutRepoGroup(group, checkoutDir, deps = {}) {
   const runGitCommand = deps.runGitCommand || runGit;
   const repoUrl = group.repoUrl;
   const ref = group.ref || 'main';
-  const sparsePaths = Array.from(group.paths);
+  const sparsePaths = Array.from(group.paths).filter((entry) => !isWholeRepoPath(entry));
+  const cloneWholeRepo = !sparsePaths.length || Array.from(group.paths).some(isWholeRepoPath);
 
   fs.rmSync(checkoutDir, { recursive: true, force: true });
   fs.mkdirSync(path.dirname(checkoutDir), { recursive: true });
 
-  try {
-    runGitCommand(
-      ['clone', '--depth', '1', '--filter=blob:none', '--sparse', '--branch', ref, repoUrl, checkoutDir],
-      { repoUrl }
-    );
-    runGitCommand(['sparse-checkout', 'set', '--cone', ...sparsePaths], {
-      cwd: checkoutDir,
-      repoUrl,
-    });
-    return;
-  } catch {
-    fs.rmSync(checkoutDir, { recursive: true, force: true });
+  if (!cloneWholeRepo) {
+    try {
+      runGitCommand(
+        ['clone', '--depth', '1', '--filter=blob:none', '--sparse', '--branch', ref, repoUrl, checkoutDir],
+        { repoUrl }
+      );
+      runGitCommand(['sparse-checkout', 'set', '--cone', ...sparsePaths], {
+        cwd: checkoutDir,
+        repoUrl,
+      });
+      return;
+    } catch {
+      fs.rmSync(checkoutDir, { recursive: true, force: true });
+    }
   }
 
   runGitCommand(['clone', '--depth', '1', '--branch', ref, repoUrl, checkoutDir], { repoUrl });
+}
+
+function isWholeRepoPath(skillPath) {
+  const normalized = String(skillPath || '')
+    .replace(/\\/g, '/')
+    .trim();
+  return !normalized || normalized === '.' || normalized === '/';
+}
+
+function resolveExternalSkillPath(checkoutDir, skillPath) {
+  if (isWholeRepoPath(skillPath)) {
+    return checkoutDir;
+  }
+
+  return path.join(checkoutDir, ...String(skillPath).split(/[\\/]+/).filter(Boolean));
 }
 
 module.exports = {

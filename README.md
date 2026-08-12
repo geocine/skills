@@ -21,6 +21,7 @@ npx -y @geocine/skills frontend-design --project
 | `frontend-design` | Create distinctive, production-grade frontend interfaces with high design quality. |
 | `skill-creator` | Guide for creating effective skills. |
 | `zinc-design-system` | Dark, technical design system built on pure black with zinc accents. |
+| `planpack` | Bootstrap a shared planning pack (graph wiki + comments). Lives in [geocine/planpack](https://github.com/geocine/planpack). |
 
 ## Commands
 

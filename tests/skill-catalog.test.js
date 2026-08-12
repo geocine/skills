@@ -85,6 +85,43 @@ test('loadSkillsJson takes precedence when the file exists', () => {
   assert.equal(found[0].shortDescription, 'Beta short');
 });
 
+test('findSkills ignores local folders that match registered external skill names', () => {
+  const repoDir = makeTempDir('geocine-skills-catalog-');
+  writeSkill(
+    repoDir,
+    'planpack',
+    [
+      '---',
+      'name: planpack',
+      'description: Local copy that must not shadow the external skill.',
+      '---',
+      '',
+      '# Local planpack',
+      '',
+    ].join('\n')
+  );
+  writeSkill(
+    repoDir,
+    'zinc-design-system',
+    [
+      '---',
+      'name: zinc-design-system',
+      'description: Dark, technical design system.',
+      '---',
+      '',
+      '# Zinc',
+      '',
+    ].join('\n')
+  );
+
+  const skills = findSkills(repoDir);
+
+  assert.deepEqual(
+    skills.map((skill) => skill.name),
+    ['zinc-design-system']
+  );
+});
+
 test('splitRepositoryField expands comma-separated repositories into unique pills', () => {
   assert.deepEqual(
     splitRepositoryField('device ui, commonrepository, device ui'),

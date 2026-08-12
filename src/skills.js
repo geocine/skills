@@ -23,7 +23,7 @@ const {
   promptForTargets,
 } = require('./prompts');
 const { getConfiguredRepoUrl, resolveRepoRoot } = require('./repo-cache');
-const { getExplicitExternalSkills, materializeSkillSources } = require('./external-skills');
+const { getExplicitExternalSkills, getExternalSkills, materializeSkillSources } = require('./external-skills');
 const { applyListFilter, filterSkillsByName, findSkills } = require('./skill-catalog');
 const { accent, danger, muted, strong, success, warm } = require('./theme');
 
@@ -124,7 +124,9 @@ async function runInstall(options) {
       );
       logRepoStatus(repoRoot, options);
 
-      const skills = await withSpinner(spinner, 'Loading skills', () => findSkills(repoRoot.path));
+      const skills = await withSpinner(spinner, 'Loading skills', () =>
+        loadAvailableSkills(repoRoot.path)
+      );
       availableSkills = mergeExplicitSkills(skills, explicitExternalSkills);
     }
 
@@ -178,6 +180,10 @@ async function runInstall(options) {
   }
 }
 
+function loadAvailableSkills(repoPath) {
+  return mergeExplicitSkills(findSkills(repoPath), getExternalSkills());
+}
+
 function mergeExplicitSkills(skills, explicitSkills) {
   if (!explicitSkills.length) {
     return skills;
@@ -199,7 +205,7 @@ async function runList(options) {
     );
     logRepoStatus(repoRoot, options);
 
-    let skills = await withSpinner(spinner, 'Loading skills', () => findSkills(repoRoot.path));
+    let skills = await withSpinner(spinner, 'Loading skills', () => loadAvailableSkills(repoRoot.path));
     skills = applyListFilter(skills, options);
 
     if (!skills.length) {
