@@ -1,0 +1,4 @@
+interface:
+  display_name: "Grok CLI History Traversal"
+  short_description: "Traverse and filter Grok CLI session history"
+  default_prompt: "Use $grok-history-traversal to extract Grok CLI session history for a project folder."

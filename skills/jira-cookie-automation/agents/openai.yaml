@@ -1,0 +1,4 @@
+interface:
+  display_name: "Jira Cookie Automation"
+  short_description: "Automate Jira from Chrome MCP cookies"
+  default_prompt: "Use $jira-cookie-automation to extract my Jira cookie from Chrome MCP, then create, update, assign, link, and verify Jira issues."

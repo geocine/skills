@@ -1,0 +1,4 @@
+interface:
+  display_name: "Branch Backup Split Commits"
+  short_description: "Backup large changes then split commits"
+  default_prompt: "Use $branch-backup-split-commits to back up my current changes, split them into conventional commits, and verify the final tree matches."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Codex History Traversal"
+  short_description: "Traverse and filter Codex chat rollouts"
+  default_prompt: "Use $codex-history-traversal to extract Codex rollout history for a project folder."

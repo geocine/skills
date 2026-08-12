@@ -1,0 +1,4 @@
+interface:
+  display_name: "Cursor History Traversal"
+  short_description: "Traverse and filter Cursor chat rollouts"
+  default_prompt: "Use $cursor-history-traversal to extract Cursor rollout history for a project folder."
