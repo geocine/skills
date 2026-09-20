@@ -45,6 +45,7 @@ If the latest upstream launcher lacks Windows support, use the bundled launcher 
 3. Use `.exe` for the temporary artifact, versioned target, and active-binary path.
 4. Open device-login URLs with `cmd.exe /c start "" "$url"` when available.
 5. Do not let a Unix-only upstream launcher overwrite the Windows-compatible launcher during self-update. Skip launcher self-update on Windows, or accept a replacement only after checking equivalent Windows platform and `.exe` handling. Keep binary updates enabled.
+6. If the Windows compatibility check or patch cannot be applied confidently — for example after an upstream launcher restructure — stop and report the mismatch rather than guessing. Tell the user this boundary in your answer whenever upstream drift is involved; never fall back to a Linux artifact.
 
 The helper determines whether the fetched launcher is Windows-aware. If not, it uses `scripts/muse-launcher.sh`, while still allowing that launcher to fetch the latest stable binary.
 
