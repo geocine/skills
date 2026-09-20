@@ -90,7 +90,9 @@ The Zinc system embodies **technical precision** with **creative purpose**:
 | Zinc 600 | `#52525b` | `zinc-600` | Hover borders |
 | Zinc 500 | `#71717a` | `zinc-500` | Secondary text, labels |
 | Zinc 400 | `#a1a1aa` | `zinc-400` | Inactive icons, muted UI |
+| Zinc 300 | `#d4d4d8` | `zinc-300` | Textarea/select text, list item titles |
 | Zinc 200 | `#e4e4e7` | `zinc-200` | Primary text |
+| Zinc 100 | `#f4f4f5` | `zinc-100` | Defined for completeness; no standard usage |
 | White | `#ffffff` | `white` | Primary buttons, focus states |
 
 ### Semantic Colors
@@ -249,7 +251,7 @@ class="active:scale-[0.99]"
 ### ❌ Never
 
 - Use large border-radius (except avatars/badges)
-- Use colors outside zinc palette (except red for danger)
+- Use colors outside the zinc palette (except the semantic accents: red for danger, green for success, amber for warning)
 - Skip hover states on buttons/links
 - Use decorative box-shadows (only for elevated modals)
 - Mix font families inappropriately
