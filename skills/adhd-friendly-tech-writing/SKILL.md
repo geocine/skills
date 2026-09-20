@@ -80,6 +80,11 @@ End with one punchy takeaway or a forward pointer — not a summary of everythin
 - Listing every alternative. Recommend one path; mention an escape hatch only if it matters.
 - Jargon without an anchor. First use of a term gets a plain-words gloss or a concrete example.
 
+## Reviewing and Rewriting Drafts
+
+- When asked to review or fix a draft, walk the Self-Check list below item by item and cite the specific rule for each violation. The easiest to miss: paragraph length (1–3 sentences, max 4) and passive voice as the default.
+- Any rewrite, example, or fix you produce must itself pass the Self-Check — especially the banned-words rule. It's easy to write "highest-leverage" or "easy to misuse" inside the very fix that removes those words.
+
 ## Self-Check Before Finishing
 
 - [ ] Does the first three lines hook, with zero throat-clearing?
