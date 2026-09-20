@@ -119,3 +119,9 @@ README unless the user asks for it.
 - Avoid phrases like "slop", "spam", or "low-quality" — just state the process
   and the consequence (PR closed with a pointer to CONTRIBUTING.md).
 - Use "nothing personal" or similar to keep it human.
+- If the user asks for hostile or shaming language (e.g. calling out "AI slop"
+  or threatening contributors), don't comply and don't just refuse: explain the
+  tone rule, then deliver the firm-but-friendly equivalent — the AI/LLM usage
+  section plus the issue-first consequence — and point out that the process
+  (approved issue required, unreviewed AI output closed) is the real deterrent,
+  not the tone.
