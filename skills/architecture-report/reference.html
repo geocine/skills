@@ -1,0 +1,599 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Herdr Architecture</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#fbfbfa;--fg:#1d1d1b;--mute:#6b6a66;--line:#e2e1dc;--code:#f1f0ec;--acc:#3b6ea8}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#151514;--fg:#e6e5e0;--mute:#9a9892;--line:#2c2b29;--code:#1f1e1c;--acc:#7fa8d8}}
+:root[data-theme="dark"]{--bg:#151514;--fg:#e6e5e0;--mute:#9a9892;--line:#2c2b29;--code:#1f1e1c;--acc:#7fa8d8}
+*{box-sizing:border-box}
+:root{--sans:"Inter",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;--mono:"JetBrains Mono",ui-monospace,"Cascadia Code",Consolas,monospace;
+--hl-c:#8a8780;--hl-k:#a3326b;--hl-f:#2f6aa8;--hl-s:#3f7a3a;--hl-n:#a2611b;--hl-t:#6b52a8}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--hl-c:#7c7a74;--hl-k:#e07fae;--hl-f:#82b3e8;--hl-s:#9ccc8a;--hl-n:#e6ac6c;--hl-t:#b9a2ef}}
+:root[data-theme="dark"]{--hl-c:#7c7a74;--hl-k:#e07fae;--hl-f:#82b3e8;--hl-s:#9ccc8a;--hl-n:#e6ac6c;--hl-t:#b9a2ef}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.7 var(--sans);font-feature-settings:"cv11","ss01";-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+main{max-width:880px;margin:0 auto;padding:56px 16px 112px}
+h1{font-size:32px;line-height:1.2;margin:0 0 8px;letter-spacing:-.022em;font-weight:700}
+h2{font-size:22px;line-height:1.3;margin:64px 0 12px;padding-top:24px;border-top:1px solid var(--line);letter-spacing:-.014em;font-weight:650}
+h3{font-size:12.5px;margin:32px 0 8px;color:var(--mute);text-transform:uppercase;letter-spacing:.08em;font-weight:600}
+p{margin:10px 0;max-width:72ch}
+b{font-weight:600}
+.sub{color:var(--mute);margin:0 0 28px;font-size:17px;max-width:68ch}
+nav{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:14px;font-weight:500}
+a{color:var(--acc);text-decoration:none}a:hover{text-decoration:underline}
+code{font:.86em/1.4 var(--mono);background:var(--code);padding:.1em .35em;border-radius:4px;font-variant-ligatures:none}
+pre{font:13.5px/1.7 var(--mono);background:var(--code);padding:18px 20px;border-radius:8px;overflow-x:auto;margin:14px 0;font-variant-ligatures:none;tab-size:2}
+pre code{background:none;padding:0;font-size:inherit}
+.c{color:var(--hl-c);font-style:italic}.k{color:var(--hl-k);font-weight:600}.f{color:var(--hl-f)}.s{color:var(--hl-s)}.n{color:var(--hl-n)}.t{color:var(--hl-t)}.p{color:var(--mute)}
+.bytes{display:flex;margin:14px 0 4px;font:13px/1.3 var(--mono);border:1px solid var(--line2);border-radius:8px;overflow:hidden;min-width:0}
+.bytes>div{padding:10px 12px;border-right:1px solid var(--line2);background:var(--card);min-width:0}
+.bytes>div:last-child{border-right:0;background:var(--code)}
+.bytes b{display:block;font-weight:600;color:var(--hl-f)}
+.bytes span{color:var(--mute);font-size:12px}
+.bytes i{display:block;font-style:normal;color:var(--hl-n);font-size:11px;margin-bottom:2px}
+ul,ol{padding-left:22px;margin:10px 0}li{margin:5px 0}li>ul,li>ol{margin:4px 0}
+table{width:100%;border-collapse:collapse;font-size:15px;margin:10px 0}
+th,td{text-align:left;vertical-align:top;padding:6px 8px;border-bottom:1px solid var(--line)}
+th{color:var(--mute);font-weight:500}
+td:first-child{white-space:nowrap}
+.wrap{overflow-x:auto}
+.note{color:var(--mute);font-size:13px}
+:root{--card:#fff;--line2:#c9c7c0}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--card:#1c1b1a;--line2:#3d3c39}}
+:root[data-theme="dark"]{--card:#1c1b1a;--line2:#3d3c39}
+.fig{overflow-x:auto;margin:16px 0}
+.fig svg{display:block;width:100%;min-width:640px;height:auto}
+svg text{font:12px var(--sans);fill:var(--fg)}
+svg .b{font-weight:600;font-size:13px}
+svg .m{fill:var(--mute);font-size:11px}
+svg .mono{font-family:var(--mono);font-size:11px}
+svg .box{fill:var(--card);stroke:var(--line2)}
+svg .chip{fill:var(--code)}
+svg .ln{stroke:var(--acc);stroke-width:1.5;fill:none}
+svg .dash{stroke-dasharray:4 3}
+svg .ah{fill:var(--acc)}
+.flow{display:flex;flex-wrap:wrap;align-items:stretch;gap:8px;margin:16px 0}
+.step{flex:1 1 120px;background:var(--card);border:1px solid var(--line2);border-radius:6px;padding:8px 10px;font-size:13px;position:relative}
+.step b{display:block;font-weight:600}
+.step span{color:var(--mute);font-size:12px}
+.step:not(:last-child)::after{content:"→";position:absolute;right:-9px;top:50%;transform:translateY(-50%);color:var(--acc);font-size:13px;background:var(--bg);line-height:1}
+/* theme toggle */
+:root{color-scheme:light dark}:root[data-theme="light"]{color-scheme:light}:root[data-theme="dark"]{color-scheme:dark}
+.theme-toggle{position:fixed;top:12px;right:12px;z-index:10;display:flex;gap:2px;padding:3px;background:var(--card);border:1px solid var(--line2);border-radius:8px;font:500 12px/1 var(--sans)}
+.theme-toggle button{border:0;background:none;color:var(--mute);padding:6px 10px;border-radius:5px;cursor:pointer;font:inherit}
+.theme-toggle button:hover{color:var(--fg)}
+.theme-toggle button[aria-pressed="true"]{background:var(--code);color:var(--fg)}
+.theme-toggle button:focus-visible{outline:2px solid var(--acc);outline-offset:1px}
+@media (max-width:720px){.theme-toggle{position:absolute}}
+@media print{.theme-toggle{display:none}}
+</style>
+<script>
+(function(){
+  var KEY="doc-theme", root=document.documentElement;
+  function apply(t){ if(t==="light"||t==="dark") root.setAttribute("data-theme",t); else root.removeAttribute("data-theme"); }
+  try{ apply(localStorage.getItem(KEY)); }catch(e){}
+  document.addEventListener("DOMContentLoaded",function(){
+    var group=document.createElement("div");
+    group.className="theme-toggle"; group.setAttribute("role","group"); group.setAttribute("aria-label","Colour theme");
+    function sync(){ var cur=root.getAttribute("data-theme")||"system";
+      group.querySelectorAll("button").forEach(function(b){ b.setAttribute("aria-pressed", String(b.dataset.v===cur)); }); }
+    ["dark","light","system"].forEach(function(v){
+      var b=document.createElement("button"); b.type="button"; b.dataset.v=v;
+      b.textContent=v.charAt(0).toUpperCase()+v.slice(1);
+      b.addEventListener("click",function(){
+        try{ if(v==="system") localStorage.removeItem(KEY); else localStorage.setItem(KEY,v); }catch(e){}
+        apply(v); sync(); });
+      group.appendChild(b); });
+    document.body.appendChild(group); sync();
+  });
+})();
+</script>
+</head>
+<body>
+<main>
+<h1>Herdr architecture</h1>
+<p class="sub">herdr-app (GPUI desktop client, geocine fork 0.1.16) and herdr-core (<code>hc</code>, the terminal runtime). Paths: core = <code>herdr-core/crates/herdr-core/src/</code>, app = <code>herdr-app/src/</code>.</p>
+<nav>
+<a href="#overview">Overview</a><a href="#processes">Processes</a><a href="#wire">Communication</a><a href="#pipeline">Terminal pipeline</a><a href="#tabs">Tabs &amp; panes</a><a href="#render">UI rendering</a><a href="#mods">Mods</a><a href="#core-services">Core services</a><a href="#app-services">App services</a><a href="#state">State &amp; config</a><a href="#blueprint">Blueprint</a>
+</nav>
+
+<h2 id="overview">Overview</h2>
+<p>Core is a runtime, not a multiplexer: it owns programs, PTYs and screen state, and draws nothing. The app is one of its clients. It draws everything and keeps its own layout. Agent status comes only from OSC 7501.</p>
+<div class="fig">
+<svg viewBox="0 0 860 330" role="img" aria-label="herdr-app talks to hc connect over stdio, which talks framed wire to the core; the core talks to the holder which owns PTYs; CLI and remote machines also reach the core">
+<defs><marker id="a1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0L10,5L0,10z" class="ah"/></marker></defs>
+<!-- app -->
+<rect class="box" x="10" y="20" width="230" height="200" rx="8"/>
+<text class="b" x="26" y="44">herdr-app</text><text class="m" x="26" y="61">GPUI window</text>
+<rect class="chip" x="26" y="76" width="198" height="28" rx="4"/><text x="38" y="94">AppWindow</text>
+<rect class="chip" x="26" y="112" width="198" height="28" rx="4"/><text x="38" y="130">TerminalView · Vt</text>
+<rect class="chip" x="26" y="148" width="198" height="28" rx="4"/><text x="38" y="166">Mods · QuickJS</text>
+<rect class="chip" x="26" y="184" width="198" height="28" rx="4"/><text class="mono" x="38" y="202">herdr-app.sock</text>
+<!-- hc connect -->
+<rect class="box" x="280" y="95" width="120" height="52" rx="8"/>
+<text class="b" x="340" y="118" text-anchor="middle">hc connect</text><text class="m" x="340" y="135" text-anchor="middle">child process</text>
+<!-- core -->
+<rect class="box" x="450" y="20" width="180" height="200" rx="8"/>
+<text class="b" x="466" y="44">hc serve</text><text class="m" x="466" y="61">core · one per session</text>
+<rect class="chip" x="466" y="76" width="148" height="28" rx="4"/><text x="478" y="94">JSON-RPC API</text>
+<rect class="chip" x="466" y="112" width="148" height="28" rx="4"/><text x="478" y="130">Relay · ghostty-vt</text>
+<rect class="chip" x="466" y="148" width="148" height="28" rx="4"/><text x="478" y="166">events · docs</text>
+<rect class="chip" x="466" y="184" width="148" height="28" rx="4"/><text x="478" y="202">machines · kept</text>
+<!-- holder -->
+<rect class="box" x="700" y="20" width="150" height="200" rx="8"/>
+<text class="b" x="716" y="44">hc hold</text><text class="m" x="716" y="61">holder · one per build</text>
+<rect class="chip" x="716" y="76" width="118" height="28" rx="4"/><text x="728" y="94">PTY / ConPTY</text>
+<rect class="chip" x="716" y="112" width="118" height="28" rx="4"/><text x="728" y="130">bash</text>
+<rect class="chip" x="716" y="148" width="118" height="28" rx="4"/><text x="728" y="166">claude · codex</text>
+<rect class="chip" x="716" y="184" width="118" height="28" rx="4"/><text x="728" y="202">1 MiB tails</text>
+<!-- links -->
+<path class="ln" d="M240,121H280" marker-start="url(#a1)" marker-end="url(#a1)"/><text class="m" x="260" y="112" text-anchor="middle">stdio</text>
+<path class="ln" d="M400,121H450" marker-start="url(#a1)" marker-end="url(#a1)"/><text class="m" x="425" y="112" text-anchor="middle">frames</text>
+<path class="ln" d="M630,121H700" marker-start="url(#a1)" marker-end="url(#a1)"/><text class="m" x="665" y="112" text-anchor="middle">holder sock</text>
+<!-- CLI -->
+<rect class="box" x="280" y="262" width="160" height="48" rx="8"/>
+<text class="b" x="360" y="283" text-anchor="middle">hc CLI · agents</text><text class="m" x="360" y="299" text-anchor="middle">one call per command</text>
+<path class="ln" d="M440,286H540V222" marker-end="url(#a1)"/><text class="m" x="490" y="278" text-anchor="middle">socket / pipe</text>
+<!-- remote -->
+<rect class="box" x="650" y="262" width="200" height="48" rx="8"/>
+<text class="b" x="750" y="283" text-anchor="middle">remote machine</text><text class="m mono" x="750" y="299" text-anchor="middle">herdr-core connect</text>
+<path class="ln" d="M600,222V286H648" marker-start="url(#a1)" marker-end="url(#a1)"/><text class="m" x="608" y="250">ssh / --via</text>
+</svg>
+</div>
+
+<h2 id="processes">Processes</h2>
+<p>herdr-core is one binary (<code>hc</code>). Hidden subcommands pick the role (<code>cli.rs:112</code>).</p>
+<div class="wrap"><table>
+<tr><th>Process</th><th>Role</th><th>Lifetime</th></tr>
+<tr><td><code>hc …</code> CLI</td><td>One API call per command. <code>connect_starting</code> autostarts the core if nobody is listening.</td><td>Short-lived</td></tr>
+<tr><td><code>hc serve</code> core</td><td>One per session (<code>HC_SESSION</code>), guarded by <code>core.lock</code>. Single-thread tokio runtime with background tasks: <code>recover_kept</code>, <code>remote::start_all</code>, <code>watch_foreground</code>, <code>keep_screens</code>, <code>settle_exits</code>, <code>save_when_due</code>.</td><td>Daemon; restarts by handover</td></tr>
+<tr><td><code>hc hold</code> holder</td><td>Owns every PTY and is the parent of every program. Keeps a 1 MiB raw tail per terminal and parses nothing. There is one holder per build; old builds drain. It respawns a missing core after 3 s, with backoff capped at 60 s.</td><td>Until its last terminal ends</td></tr>
+<tr><td><code>hc connect</code></td><td>Stdio bridge into a core, used by the app and by remote machines over ssh.</td><td>Per client</td></tr>
+<tr><td>herdr-app</td><td>GPUI window. Finds <code>hc</code> (not bundled), connects, renders. One window per home (<code>control::raise_running</code>).</td><td>User session</td></tr>
+</table></div>
+<p><b>Detached launch</b> (<code>client::spawn_detached</code>):</p>
+<ul>
+<li><b>Linux:</b> <code>systemd-run --user</code> transient units (<code>KillMode=process</code>, lingering), or setsid when systemd is missing.</li>
+<li><b>macOS:</b> the core runs as a launchd one-shot job; holders run under <code>setsid</code>.</li>
+<li><b>Windows:</b> <code>CreateProcessW</code> with <code>DETACHED_PROCESS | CREATE_BREAKAWAY_FROM_JOB</code>.</li>
+</ul>
+<p><b>Restart and update:</b> the core sends the holder <code>Goodbye::Handover</code>, saves its screens and writes <code>restart-env.json</code>. Programs keep running.</p>
+<p><b>App boot</b> (<code>main.rs</code>):</p>
+<ol>
+<li><code>update::apply_on_startup</code></li>
+<li><code>core_bin::find</code>, which tries settings, then PATH, then known directories, then the login-shell PATH</li>
+<li><code>use_core</code></li>
+<li><code>hc::Core::connect</code></li>
+<li><code>hc::check(hello)</code>, which checks <code>GENERATION</code>, <code>core_min</code> and the required methods</li>
+<li><code>open_main</code></li>
+</ol>
+<p>If boot fails, the app opens <code>setup::open</code> (Install / Fix) instead of the main window.</p>
+
+<h2 id="wire">Communication</h2>
+<h3>Endpoints</h3>
+<ul>
+<li><b>Unix:</b> <code>$XDG_RUNTIME_DIR/herdr-core/&lt;session&gt;.sock</code></li>
+<li><b>Windows:</b> <code>\\.\pipe\herdr-core-&lt;USER&gt;-&lt;session&gt;.sock</code> (ACL limited to the user and SYSTEM)</li>
+<li><b>Holder sockets:</b> next to the client endpoint</li>
+<li><b>App control socket:</b> <code>$HERDR_APP_HOME/herdr-app.sock</code>, one JSON line per request (<code>herdr-app do|status|ls|shot</code>)</li>
+</ul>
+<h3>Client wire (<code>wire.rs</code>, app <code>hc.rs</code>)</h3>
+<p>The connection starts as JSON-RPC 2.0, one message per line. A <code>hello {framed:true}</code> switches it to binary frames:</p>
+<div class="bytes">
+<div style="flex:4"><i>0</i><b>channel</b><span>u32 LE</span></div>
+<div style="flex:1.4"><i>4</i><b>kind</b><span>u8</span></div>
+<div style="flex:4"><i>5</i><b>len</b><span>u32 LE</span></div>
+<div style="flex:7"><i>9</i><b>payload</b><span>≤ 16 MiB</span></div>
+</div>
+<p class="note">9-byte header. Channel 0 carries JSON-RPC; each attach or event stream gets its own channel.</p>
+<pre><code><span class="c">// 1. handshake: one JSON line each way</span>
+<span class="p">→</span> {<span class="f">"jsonrpc"</span>:<span class="s">"2.0"</span>,<span class="f">"id"</span>:<span class="n">1</span>,<span class="f">"method"</span>:<span class="s">"hello"</span>,<span class="f">"params"</span>:{<span class="f">"framed"</span>:<span class="k">true</span>}}
+<span class="p">←</span> {<span class="f">"jsonrpc"</span>:<span class="s">"2.0"</span>,<span class="f">"id"</span>:<span class="n">1</span>,<span class="f">"result"</span>:{<span class="f">"core"</span>:<span class="s">"…"</span>,<span class="f">"features"</span>:[<span class="s">"automatic_input"</span>,<span class="p">…</span>]}}
+
+<span class="c">// 2. binary frames from here on</span>
+<span class="n">0</span>  <span class="k">DATA</span>             <span class="c">terminal bytes, either direction</span>
+<span class="n">1</span>  <span class="k">CREDIT</span>           <span class="c">viewer returns window (256 KiB start)</span>
+<span class="n">2</span>  <span class="k">CLOSE</span>            <span class="c">stream ended, with reason</span>
+<span class="n">3</span>  <span class="k">RESIZE</span>           <span class="t">u16</span> cols, <span class="t">u16</span> rows
+<span class="n">4</span>  <span class="k">FOCUS</span>            <span class="c">viewer focus in / out</span>
+<span class="n">5</span>  <span class="k">FACTS</span>            <span class="t">json</span> Display <span class="c">(colors, cell px)</span>
+<span class="n">6</span>  <span class="k">AUTOMATIC_INPUT</span>  <span class="c">engine replies, not typed by a person</span></code></pre>
+<p><b>Flow control:</b> credit-based, with a 256 KiB window per stream.</p>
+<ul>
+<li>A viewer more than 4 MiB behind gets a fresh repaint instead of the backlog.</li>
+<li>A client with more than 64 MiB of unread control replies is dropped.</li>
+<li>The app returns credit per byte it ingests.</li>
+</ul>
+<h3>API (<code>api.rs</code>, <code>schema/hc.openrpc.json</code>)</h3>
+<pre><code><span class="f">hello</span>  <span class="f">rpc.discover</span>  <span class="f">events.subscribe</span>  <span class="f">templates.list</span>
+<span class="f">server</span><span class="p">.</span>   <span class="k">status stop restart</span>
+<span class="f">terminal</span><span class="p">.</span> <span class="k">run list get kill rm keep label read attach</span>
+          <span class="k">send wait keys interrupt put put_begin put_chunk put_finish put_abort</span>
+<span class="f">machine</span><span class="p">.</span>  <span class="k">exec add list connect rename rm</span>
+<span class="f">file</span><span class="p">.</span>     <span class="k">read write edit</span>
+<span class="f">doc</span><span class="p">.</span>      <span class="k">get set</span>          <span class="c">// versioned, compare-and-set</span></code></pre>
+<p><b>Events</b> (<code>event</code> with <code>seq</code>; also <code>heartbeat</code> every 15 s, and <code>missed</code> with a fresh snapshot):</p>
+<pre><code>{<span class="f">"jsonrpc"</span>:<span class="s">"2.0"</span>,<span class="f">"method"</span>:<span class="s">"event"</span>,<span class="f">"params"</span>:{<span class="f">"seq"</span>:<span class="n">42</span>,<span class="f">"type"</span>:<span class="s">"status"</span>,<span class="f">"terminal"</span>:<span class="s">"t7"</span>,<span class="f">"data"</span>:{<span class="p">…</span>}}}
+
+<span class="c">// type</span>
+<span class="k">created  lost  restarted  keep  finished  removed</span>
+<span class="k">status  turn  title  labels  size  foreground  doc</span></code></pre>
+<h3>Core ↔ holder (<code>holder_proto.rs</code>)</h3>
+<div class="bytes">
+<div style="flex:1.4"><i>0</i><b>kind</b><span>u8</span></div>
+<div style="flex:4"><i>1</i><b>terminal</b><span>u32 LE</span></div>
+<div style="flex:4"><i>5</i><b>len</b><span>u32 LE</span></div>
+<div style="flex:7"><i>9</i><b>payload</b><span>JSON control · raw bytes</span></div>
+</div>
+<pre><code><span class="c">// core → holder</span>
+<span class="k">HELLO  SPAWN  INPUT  RESIZE  SIGNAL  RELEASE  GOODBYE  FOREGROUND  DRAIN</span>
+<span class="c">// holder → core</span>
+<span class="k">WELCOME  TAIL  OUTPUT  SPAWNED  SPAWN_FAILED  EXITED  BYE  FOREGROUND_IS</span>
+<span class="c">// VERSION = 1 · GOODBYE carries Handover on restart</span></code></pre>
+<h3>How the app uses the core</h3>
+<ul>
+<li><b>Process and threads:</b> the app spawns <code>hc connect</code> as a child. Its threads are <code>hc-writer</code>, fed by an mpsc so the UI never blocks; <code>hc-reader</code>, which routes replies and streams; and <code>hc-stderr</code>.</li>
+<li><b>Calls:</b> <code>terminal.run|list|get|kill|label|keep|attach|read</code>, <code>events.subscribe</code>, <code>doc.get|set</code>, <code>machine.list</code> and <code>server.status</code>. The default timeout is 10 s.</li>
+<li><b>Input:</b> <code>key_down</code> → <code>vt.encode_key</code> → DATA frame. Replies from the app's own terminal engine go as AUTOMATIC_INPUT.</li>
+<li><b>Resize:</b> <code>Grid::fit</code> → <code>vt.resize</code> + RESIZE frame. The last active viewer decides the size; observers never resize.</li>
+<li><b>Focus and display facts:</b> focus goes as FOCUS frames. Colors and device-pixel cell size go as FACTS.</li>
+<li><b>Event loop:</b> <code>EventLines</code> is drained every 500 ms. Every 5th tick it also lists machines.</li>
+<li><b>Reconnect:</b> <code>core.closed()</code> → retry every 1 s → <code>reconnected()</code> bumps <code>core_generation</code> and reattaches every pane.</li>
+</ul>
+<h3>Remote machines (<code>machines.rs</code>, <code>remote.rs</code>)</h3>
+<ul>
+<li>The core keeps one framed <code>Line</code> per machine over <code>ssh -o BatchMode=yes … herdr-core connect</code>, or a custom <code>--via</code> command.</li>
+<li>On Unix the lines share an ssh ControlMaster; Windows has none.</li>
+<li>Line states: <code>Connecting</code>, <code>Connected</code>, <code>NeedsLogin</code>, <code>NeedsUpdate</code>, <code>Unreachable</code>.</li>
+<li>Addresses like <code>box/t7</code> are routed to that machine. Its events are merged into the local stream, and attach streams are relayed.</li>
+<li>In the app, <code>on: &lt;machine&gt;</code> is passed to run and doc calls, and <code>remote_shell.rs</code> wraps launches in the remote machine's shell.</li>
+</ul>
+
+<h2 id="pipeline">Terminal pipeline</h2>
+<div class="fig">
+<svg viewBox="0 0 860 230" role="img" aria-label="Output flows program to holder to core relay to app Vt to GPUI canvas; input flows back from keys through the input queue and holder to the program">
+<defs><marker id="a2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0L10,5L0,10z" class="ah"/></marker></defs>
+<text class="m" x="10" y="14">OUTPUT →</text>
+<rect class="box" x="10" y="24" width="100" height="64" rx="8"/><text class="b" x="60" y="52" text-anchor="middle">program</text><text class="m" x="60" y="69" text-anchor="middle">bash, claude…</text>
+<rect class="box" x="170" y="24" width="120" height="64" rx="8"/><text class="b" x="230" y="52" text-anchor="middle">holder</text><text class="m" x="230" y="69" text-anchor="middle">PTY · tail · backlog</text>
+<rect class="box" x="350" y="24" width="150" height="64" rx="8"/><text class="b" x="425" y="52" text-anchor="middle">core Relay</text><text class="m" x="425" y="69" text-anchor="middle">ghostty-vt screen</text>
+<rect class="box" x="560" y="24" width="120" height="64" rx="8"/><text class="b" x="620" y="52" text-anchor="middle">app Vt</text><text class="m" x="620" y="69" text-anchor="middle">ghostty-sys</text>
+<rect class="box" x="740" y="24" width="110" height="64" rx="8"/><text class="b" x="795" y="52" text-anchor="middle">GPUI canvas</text><text class="m" x="795" y="69" text-anchor="middle">paint_grid</text>
+<path class="ln" d="M110,46H168" marker-end="url(#a2)"/><text class="m" x="140" y="38" text-anchor="middle">pty</text>
+<path class="ln" d="M290,46H348" marker-end="url(#a2)"/><text class="m" x="320" y="38" text-anchor="middle">OUTPUT</text>
+<path class="ln" d="M500,46H558" marker-end="url(#a2)"/><text class="m" x="530" y="38" text-anchor="middle">paint+raw</text>
+<path class="ln" d="M680,46H738" marker-end="url(#a2)"/><text class="m" x="710" y="38" text-anchor="middle">Frame</text>
+<path class="ln dash" d="M350,72H292" marker-end="url(#a2)"/><text class="m" x="320" y="102" text-anchor="middle">replies</text>
+<text class="m" x="425" y="106" text-anchor="middle">answers queries · OSC 7501</text>
+<text class="m" x="425" y="121" text-anchor="middle">titles · mode 9001 · OSC 9;9</text>
+<!-- input lane -->
+<path class="ln" d="M795,88V175H772" marker-end="url(#a2)"/>
+<rect class="chip" x="630" y="160" width="140" height="30" rx="4"/><text class="mono" x="700" y="179" text-anchor="middle">encode_key → DATA</text>
+<path class="ln" d="M630,175H487" marker-end="url(#a2)"/>
+<rect class="chip" x="365" y="160" width="120" height="30" rx="4"/><text class="mono" x="425" y="179" text-anchor="middle">input.rs queue</text>
+<path class="ln" d="M365,175H287" marker-end="url(#a2)"/>
+<rect class="chip" x="175" y="160" width="110" height="30" rx="4"/><text class="mono" x="230" y="179" text-anchor="middle">holder INPUT</text>
+<path class="ln" d="M175,175H60V90" marker-end="url(#a2)"/>
+<text class="m" x="10" y="218">← INPUT · agent sends join the same queue, never interleaved with typing</text>
+</svg>
+</div>
+<ol>
+<li><b>Spawn:</b> <code>terminal.run</code> sends <code>SPAWN</code> to the current holder, which opens a Unix PTY or a ConPTY. On Windows the ConPTY comes from the <code>conpty.dll</code> shipped next to <code>hc</code>.</li>
+<li><b>Parse:</b> every output byte goes into the core's ghostty-vt screen. The screen answers queries itself, and those queries are removed from what viewers receive.</li>
+<li><b>Stream:</b> on attach the viewer gets a first paint: <code>CAN</code>, a VT re-render of the screen and scrollback, mode <code>9001</code>, the status records as OSC 7501, and a parser continuation. After that it receives the program's raw output. There are no screen diffs.</li>
+<li><b>Agent input:</b> per-terminal queue (<code>input.rs</code>), so agent sends never interleave with each other or with a person typing.</li>
+<li><b>Read:</b> <code>terminal.read</code> returns <code>screen</code>, <code>history</code> or <code>stitched</code>. Stitched scrolls full-screen apps with the mouse wheel and glues the pages together (<code>stitch.rs</code>).</li>
+<li><b>Persistence:</b> screens are saved as <code>screens/&lt;addr&gt;.snap</code>, for kept terminals periodically and for all terminals on handover. After a crash they are rebuilt from the holder tail.</li>
+</ol>
+
+<h2 id="tabs">Tabs &amp; panes (herdr-app)</h2>
+<p>Core knows only flat terminals (<code>t7</code>, <code>box/t7</code>). The app owns the grouping: spaces, then tabs, then a split tree of panes. It stores that grouping back in the core as a shared document, so every client sees the same tabs.</p>
+<div class="fig">
+<svg viewBox="0 0 860 310" role="img" aria-label="Model holds spaces, each space holds tabs, each tab a pane tree whose blocks point at core terminals; the layout's Context block draws the active tab; every pane's TerminalView stays attached; tabs are saved as a core document plus a private view file">
+<defs><marker id="a3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0L10,5L0,10z" class="ah"/></marker></defs>
+<text class="m" x="10" y="16">MODEL · model.rs</text><text class="m" x="330" y="16">RENDER · window.rs</text><text class="m" x="620" y="16">SHARED STATE</text>
+<!-- hierarchy -->
+<path class="ln" d="M25,72V106H38"/><path class="ln" d="M55,128V162H68"/><path class="ln" d="M85,184V218H98"/><path class="ln dash" d="M115,240V274H128"/>
+<rect class="box" x="10" y="28" width="250" height="44" rx="8"/><text class="b" x="24" y="47">Model</text><text class="m" x="24" y="63">spaces · active · agents</text>
+<rect class="box" x="40" y="84" width="220" height="44" rx="8"/><text class="b" x="54" y="103">Space</text><text class="m" x="54" y="119">folder · machine · active tab</text>
+<rect class="box" x="70" y="140" width="190" height="44" rx="8"/><text class="b" x="84" y="159">Tab</text><text class="m" x="84" y="175">root · focused · zoomed · settled</text>
+<rect class="box" x="100" y="196" width="160" height="44" rx="8"/><text class="b" x="114" y="215">Pane block</text><text class="m" x="114" y="231">in Row / Column / Stack</text>
+<rect class="box dash" x="130" y="252" width="130" height="44" rx="8"/><text class="b" x="144" y="271">terminal t7</text><text class="m" x="144" y="287">lives in core</text>
+<!-- render -->
+<rect class="box" x="330" y="28" width="240" height="56" rx="8"/><text class="b" x="344" y="50">layout chrome</text><text class="m mono" x="344" y="69">layouts/&lt;name&gt;.json</text>
+<rect class="box" x="330" y="112" width="240" height="56" rx="8"/><text class="b" x="344" y="134">Context block {tab:"active"}</text><text class="m" x="344" y="153">draws the selected tab's root</text>
+<rect class="box" x="330" y="196" width="240" height="56" rx="8"/><text class="b" x="344" y="218">terms: pane → TerminalView</text><text class="m" x="344" y="237">every tab attached, visible ones drawn</text>
+<path class="ln" d="M450,84V110" marker-end="url(#a3)"/>
+<path class="ln" d="M450,168V194" marker-end="url(#a3)"/>
+<path class="ln" d="M260,162H295V140H328" marker-end="url(#a3)"/>
+<path class="ln dash" d="M260,274H295V226H328" marker-end="url(#a3)"/><text class="m" x="300" y="266">attach</text>
+<!-- shared -->
+<rect class="box" x="620" y="28" width="230" height="56" rx="8"/><text class="b" x="634" y="50">doc "herdr-app" in core</text><text class="m" x="634" y="69">spaces · tabs · pane trees · CAS</text>
+<rect class="box" x="620" y="96" width="230" height="56" rx="8"/><text class="b" x="634" y="118">view.json · this screen</text><text class="m" x="634" y="137">active · focused · zoomed · settled</text>
+<rect class="box" x="620" y="164" width="230" height="56" rx="8"/><text class="b" x="634" y="186">terminal labels</text><text class="m mono" x="634" y="205">herdr.space · seen · pinned</text>
+<rect class="box" x="620" y="232" width="230" height="56" rx="8"/><text class="b" x="634" y="254">tabs mod (JS strip)</text><text class="m" x="634" y="273">reads spaces/panes → run("tab.*")</text>
+</svg>
+</div>
+<h3>Lifecycle</h3>
+<ul>
+<li><b>Create</b> (<code>tab.new</code> → <code>AppWindow::new_tab</code>):
+  <ol>
+  <li>Make fresh ids <code>tb…</code> and <code>p…</code>, prefixed with the machine name for remote spaces.</li>
+  <li>Size the new terminal from the layout (<code>initial_size</code>).</li>
+  <li>Start it with <code>terminal.run</code> in the space's folder and on the space's machine.</li>
+  <li>Add it with <code>Model::add_tab</code>, which selects it, or <code>add_tab_unselected</code> when <code>focus:false</code>.</li>
+  </ol>
+  A tab whose only pane is a mod (<code>new_mod_tab</code>) starts no terminal.</li>
+<li><b>Split, move, swap</b> (<code>pane.split|swap|close</code>, <code>Model::split / move_pane / swap_panes</code>): these edit the tab's <code>root</code> tree. A new split runs on the same machine as the pane it splits.</li>
+<li><b>Switch</b> (<code>tab.select|next|prev|move|rename|settle</code>): this only changes the model. <code>sync()</code> then shows the selected tab.
+  <ul>
+  <li><code>sync()</code> keeps a <code>TerminalView</code> attached for every pane of every tab. Only visible panes are drawn, and hidden ones are blurred. That makes switching instant and keeps kitty images, which a repaint can't bring back.</li>
+  <li><code>HiddenFit</code> sizes the terminals in hidden tabs, so they don't reflow when shown.</li>
+  </ul></li>
+<li><b>Settle:</b> a settled tab is put away. It leaves the lists but keeps running, and it comes back when it is shown or when one of its agents needs you.</li>
+<li><b>Close:</b> <code>tab.close</code> ends the tab's terminals in core. <code>Model::remove_tab</code> returns their addresses.</li>
+<li><b>Reconcile</b> (on every <code>terminal.list</code>, about every 500 ms): <code>reconcile()</code> drops panes whose terminal ended. It also places terminals labeled <code>herdr.space</code> that aren't shown yet, such as ones started by an agent, by a script, or before a restart.</li>
+<li><b>Attention:</b> each pane's OSC 7501 word rolls up to its tab and space by priority, blocked &gt; done &gt; working &gt; idle (<code>Model::rollup</code>). Whether you've seen a turn is shared across clients through the <code>herdr.seen</code> label.</li>
+</ul>
+<h3>Persistence</h3>
+<ul>
+<li><b>Shared document:</b> <code>mirror::Document::capture(model)</code> turns the spaces, tabs and pane trees into the doc <code>herdr-app</code>, one per machine.
+  <ul>
+  <li><code>flush_documents</code> writes it on the background executor through <code>mirror_sync::round</code>, using <code>doc.set</code> with a version (compare-and-set). On a conflict the app reads the newer version back.</li>
+  <li>Fields the app doesn't know (<code>rest</code>) are written back unchanged, so a newer client's data survives an older client's write.</li>
+  </ul></li>
+<li><b>Private view:</b> what this screen shows (the active space and tab, focus history, zoom, settled tabs, recent spaces) goes to <code>view.json</code>, not to the shared document.</li>
+<li><b>Tab strip:</b> the strip is a mod (<code>defaults/mods/tabs/main.js</code>). It reads <code>spaces</code> and <code>panes</code>, labels tabs from their agent's live title, and switches tabs with <code>run("tab.next")</code> on the mouse wheel. Keys and <code>herdr-app do tab.select</code> go through the same <code>COMMANDS</code> table.</li>
+</ul>
+
+<h2 id="render">UI rendering (herdr-app)</h2>
+<ul>
+<li><b>Stack:</b> GPUI (<code>gpui-pre 0.3.8</code>, vendored with <code>HERDR:</code> patches), gpui-kit (<code>base</code>, <code>shell</code>) and patched taffy for flex layout.</li>
+<li><b>Root view:</b> <code>AppWindow</code> (<code>window.rs:408</code>) holds:
+  <ul>
+  <li>the chrome tree <code>Node</code>, from <code>layouts/&lt;name&gt;.json</code>;</li>
+  <li><code>Model</code>;</li>
+  <li><code>terms: block → Entity&lt;TerminalView&gt;</code>;</li>
+  <li>mod <code>copies</code>, each with a <code>ShellRoot</code>;</li>
+  <li><code>overlays</code>: Dialog, Popup, Toast and Window.</li>
+  </ul></li>
+<li><b>Render tree:</b> <code>render</code> → <code>render_node</code> → <code>render_block</code> (Terminal, Mod, Agent or Context) → <code>render_slot</code>. It then adds overlays, floats (<code>window/floats.rs</code>), movable windows, the <code>pane_drag</code> layer and the app-drawn titlebar. Terminals are drawn through <code>.cached()</code>.</li>
+</ul>
+<h3>Terminal → pixels</h3>
+<div class="flow">
+<div class="step"><b>bytes</b><span>Stream::Data from core</span></div>
+<div class="step"><b>ingest</b><span>≤ 6 ms per turn · credit back</span></div>
+<div class="step"><b>Vt::frame</b><span>rows as Rc, clean rows reused</span></div>
+<div class="step"><b>row_ops</b><span>cached Bg / Sprite / Icon / Text</span></div>
+<div class="step"><b>paint_grid</b><span>canvas quads, glyphs, images</span></div>
+</div>
+<ol>
+<li><code>crates/ghostty-sys</code> builds libghostty-vt with Zig 0.16 and generates bindings with bindgen. <code>vt.rs::Vt</code> wraps the terminal, the encoders, selection, search and kitty graphics.</li>
+<li><code>Vt::frame()</code> returns <code>Frame{rows: Vec&lt;Rc&lt;Vec&lt;Cell&gt;&gt;&gt;, cursor, bg, search_spans}</code>. Rows that have not changed reuse the same <code>Rc</code>.</li>
+<li><code>terminal.rs::paint_grid</code> runs inside a <code>canvas</code>. It caches per-row <code>RowOp</code>s: <code>Bg</code>, <code>Sprite</code>, <code>Icon</code>, <code>Text{ShapedLine}</code> and <code>Decoration</code>. Text is shaped with <code>shape_line().with_cell_positions</code>, with optional ligatures.</li>
+<li><code>sprites.rs</code> draws box-drawing, block and braille characters as exact geometry. Missing Nerd icons fall back to the bundled Symbols Nerd Font. Kitty images become <code>RenderImage</code>.</li>
+</ol>
+<h3>Redraw scheduling</h3>
+<ul>
+<li><b>Ingest:</b> <code>ingest</code> is time-boxed to 6 ms per turn, or 250 ms for the first history replay.</li>
+<li><b>Redraw:</b> only when the view was shown and <code>vt.shows_change()</code>.</li>
+<li><b>Output clock:</b> a shared 33 ms clock. Within 200 ms of a keystroke the view redraws immediately.</li>
+<li><b>Synchronized output:</b> mode 2026 is held for at most 1 s.</li>
+<li><b>Benchmarks:</b> <code>bench.rs</code> + <code>scripts/bench.py</code>.</li>
+</ul>
+<h3>Fonts &amp; themes</h3>
+<p><b>Fonts:</b> bundled Geist, Geist Mono, JetBrains Mono (the terminal default) and Symbols Nerd Font, plus fonts from the app home. Cell metrics follow Ghostty's rounding.</p>
+<p><b>Themes:</b></p>
+<ul>
+<li>Presets: graphite, ink, moss and paper.</li>
+<li>Shipped: atom-one-dark, win98 and geocine-dark/light.</li>
+<li>User themes: <code>themes/*.json</code>.</li>
+</ul>
+<p><code>mods::apply_theme</code> maps the theme to gpui-base <code>ColorTokens</code>, and <code>vt::theme()</code> supplies the terminal palette.</p>
+
+<h2 id="mods">Mods (herdr-app)</h2>
+<ul>
+<li><b>Runtime:</b> JS folders (<code>main.js</code>, <code>mod.json</code>) run in one QuickJS-JIT VM through <code>gpui_shell::ShellRuntime</code>. There is no DOM: scripts describe views with gpui-kit builders (<code>div</code>, <code>h_flex</code>, <code>svg</code>…), and Rust replays them as GPUI elements.</li>
+<li><b>Shipped mods:</b> <code>defaults/mods/*</code> (agents, tabs, files, changes, geocine, toast, menu…) are embedded by <code>build.rs</code> and synced at start. Frame mods are welcome, whatsnew, settings, palette and feedback.</li>
+<li><b>The <code>herdr</code> host module:</b>
+  <ul>
+  <li>System and file access: <code>exec</code>, <code>hc</code>, text file read/write (local or <code>on</code> a machine).</li>
+  <li>Live reactive reads: spaces, machines, agents, panes, terminals, focused, layout and window.</li>
+  <li>Window actions: <code>run(command)</code>, overlays, <code>notify</code>, <code>shared</code>, window title and badge.</li>
+  </ul>
+  The fork adds the <code>geocine</code> module (<code>fork_native.rs</code>: <code>listDirs</code>, <code>walk</code>, <code>copyFile</code>), used by the Files, Changes and Graph panels.</li>
+<li><b>Lifecycle:</b>
+  <ul>
+  <li>Each copy gets its own policy: read under home, write under the app home, exec and network, per-copy storage.</li>
+  <li>Changed files hot reload.</li>
+  <li>The VM restarts above 75% heap or on out-of-memory.</li>
+  <li>Requests go to the window: <code>Run</code>, <code>OpenOverlay</code>, <code>SetBadge</code>, <code>Control</code>…</li>
+  <li>On quit, mods get a 250 ms close deadline.</li>
+  </ul></li>
+</ul>
+<h3>Adding a mod</h3>
+<p>A mod is a folder. Herdr picks it up as soon as the folder exists; there is no registry and no build step.</p>
+<pre><code><span class="c">~/.config/herdr-app/mods/&lt;name&gt;/</span>      <span class="c">%APPDATA% equivalent on Windows</span>
+  <span class="f">main.js</span>    <span class="c">// required: default-exports a class extending View</span>
+  <span class="f">mod.json</span>   <span class="c">// where it first appears</span>
+  <span class="f">*.js</span> <span class="f">*.svg</span> <span class="c">// more modules ("./ui.js"), icons</span>
+
+<span class="c">// mod.json</span>
+{ <span class="f">"place"</span>: <span class="s">"right"</span>, <span class="f">"size"</span>: <span class="n">320</span>, <span class="f">"focusable"</span>: <span class="k">true</span> }   <span class="c">// place: left|right|top|bottom|none</span></code></pre>
+<pre><code><span class="k">import</span> { View, div } <span class="k">from</span> <span class="s">"gpui-kit"</span>;
+<span class="k">import</span> { v_flex } <span class="k">from</span> <span class="s">"gpui-base"</span>;
+<span class="k">import</span> { exec, spaces, theme, run } <span class="k">from</span> <span class="s">"herdr"</span>;
+
+<span class="k">export default class</span> <span class="t">Branches</span> <span class="k">extends</span> <span class="t">View</span> {
+  <span class="f">init</span>(props, cx) {                      <span class="c">// once per copy</span>
+    cx.timer.<span class="f">every</span>(<span class="n">3000</span>, (cx) =&gt; <span class="k">this</span>.<span class="f">refresh</span>(cx));
+  }
+  <span class="f">refresh</span>(cx) {
+    cx.<span class="f">spawn</span>(<span class="k">async</span> (cx) =&gt; {               <span class="c">// slow work: exec / fetch</span>
+      <span class="k">for</span> (<span class="k">const</span> p <span class="k">of</span> <span class="f">spaces</span>())
+        <span class="k">this</span>[p.id] = (<span class="k">await</span> <span class="f">exec</span>(<span class="s">"git"</span>, [<span class="s">"branch"</span>, <span class="s">"--show-current"</span>], { cwd: p.folder, on: p.machine })).stdout;
+      cx.<span class="f">notify</span>();                         <span class="c">// re-render</span>
+    });
+  }
+  <span class="f">render</span>(cx) {                            <span class="c">// re-runs on notify and on live data</span>
+    <span class="k">return</span> <span class="f">v_flex</span>().<span class="f">bg</span>(<span class="f">theme</span>().surface).<span class="f">children</span>(<span class="f">spaces</span>().<span class="f">map</span>((p) =&gt;
+      <span class="f">div</span>().<span class="f">id</span>(p.id).<span class="f">on_click</span>(() =&gt; <span class="f">run</span>(<span class="s">"space.select"</span>, { id: p.id })).<span class="f">child</span>(p.name)));
+  }
+  <span class="k">async</span> <span class="f">close</span>(cx) { }                     <span class="c">// optional, 250 ms budget</span>
+}</code></pre>
+<ol>
+<li><b>First sighting:</b> the first time Herdr sees the folder, it docks one copy into the shown layout according to <code>place</code>. With <code>"none"</code>, the mod only appears where a layout or another mod puts it. After that, the layouts decide.</li>
+<li><b>Placing it explicitly:</b>
+  <ul>
+  <li>In a layout block: <code>{"type":"block","content":{"mod":"&lt;name&gt;","props":{…}}}</code>.</li>
+  <li>As a floating block, a pane header, or an overlay: <code>openOverlay</code>.</li>
+  <li>As a tab or a split: <code>tab.new {mod}</code> or <code>split_mod</code>.</li>
+  </ul>
+  Keys can target it in a <code>mod:&lt;name&gt;</code> section of <code>keys.json</code>.</li>
+<li><b>Reload:</b> saving any file reloads every copy in place. A broken save keeps the old version running and reports the error in <code>herdr-app status</code>.</li>
+<li><b>Verify:</b> <code>herdr-app check mods/&lt;name&gt;</code> loads the mod, renders it once, and exits nonzero with the exact error.</li>
+<li><b>Shipped mods:</b> mods in <code>defaults/mods/</code> are embedded by <code>build.rs</code> and rewritten on every start. To change one, duplicate it with <code>mod.clone</code>.</li>
+<li><b>Lifetime:</b> a copy starts the first time it shows, then stays alive while its block is in the layout, even when hidden. Another layout starts its mods fresh. A pane mod stays with its tab.</li>
+</ol>
+
+<h2 id="core-services">Core services</h2>
+<div class="wrap"><table>
+<tr><td><code>status.rs</code></td><td>OSC 7501 status per terminal, stored as reported; turn counter</td></tr>
+<tr><td><code>events.rs</code></td><td>Ordered fact events, <code>missed</code> plus resnapshot</td></tr>
+<tr><td><code>wait.rs</code></td><td>Wait until a terminal is not working, until it prints given output, or on its children</td></tr>
+<tr><td><code>notes.rs</code></td><td>Types news about a child into its parent agent as a marked note</td></tr>
+<tr><td><code>kept.rs</code></td><td><code>--keep</code> terminals survive loss: fresh shell in the last folder, backoff 1.5 s → 60 s</td></tr>
+<tr><td><code>resume/*</code></td><td>Restarts the agent in resume mode when a kept terminal comes back: codex, opencode (SQLite), pi, grok, claude</td></tr>
+<tr><td><code>foreground.rs</code></td><td>Foreground process and its folder, polled about every 0.5 s</td></tr>
+<tr><td><code>stitch.rs</code></td><td>Full scrollback of alt-screen apps for <code>terminal.read</code></td></tr>
+<tr><td><code>put.rs</code></td><td>Files beside a terminal under <code>files/&lt;addr&gt;/</code>; remote puts in chunks</td></tr>
+<tr><td><code>exec.rs</code> + <code>sweep.rs</code></td><td>Runs programs without a terminal (process group or Job Object), cleans up leftovers</td></tr>
+<tr><td><code>api/doc.rs</code></td><td>Versioned opaque JSON docs, written with compare-and-set</td></tr>
+<tr><td><code>templates.rs</code></td><td><code>templates/&lt;name&gt;.md</code>: frontmatter plus a first message</td></tr>
+<tr><td><code>picker.rs</code></td><td>Fuzzy picker when a command has no target; <code>hc ls</code></td></tr>
+<tr><td><code>restart.rs</code>, <code>releases.rs</code></td><td>Handover restart; self-update checked by SHA-256</td></tr>
+</table></div>
+
+<h2 id="app-services">App services</h2>
+<div class="wrap"><table>
+<tr><td><code>settings.rs</code></td><td><code>settings.json</code>: core path, zoom, fonts, theme, fork_updates, start at login</td></tr>
+<tr><td><code>keys.rs</code></td><td><code>keys.json</code> sections <code>global | terminal | layout:&lt;n&gt; | mod:&lt;n&gt;</code>, turned into GPUI KeyBindings. The ctrl-alt-shift-esc escape hatch</td></tr>
+<tr><td><code>commands.rs</code></td><td>One <code>COMMANDS</code> table (<code>space. tab. pane. terminal. layout. app. window.</code>) used by keys, mods and <code>do</code></td></tr>
+<tr><td><code>files.rs</code></td><td>notify watcher on the app home (settings, keys, themes, layouts, mods); polls every 400 ms as a fallback</td></tr>
+<tr><td><code>mirror*.rs</code></td><td>Workspace (spaces, tabs, pane trees) stored in the core as doc <code>herdr-app</code>, one per machine, synced with compare-and-swap. Private view state goes to <code>view.json</code></td></tr>
+<tr><td><code>layout_sync.rs</code></td><td>Layout clicks (sizes, hidden, floats) go to <code>layouts/.state/</code>; real edits are written back to the layout file</td></tr>
+<tr><td><code>links.rs</code></td><td>Ghostty URL/path regex; Ctrl-hover to open</td></tr>
+<tr><td><code>programs.rs</code></td><td>Maps argv to name, icon and agent</td></tr>
+<tr><td><code>core_shell.rs</code></td><td>Prefers a POSIX shell (Git Bash) for agents on Windows</td></tr>
+<tr><td><code>update.rs</code> / <code>fork_update.rs</code></td><td>The upstream updater is effectively off. The fork only notifies about geocine/herdr-app GitHub releases (corner pill)</td></tr>
+<tr><td><code>telemetry.rs</code></td><td>Stubbed in the fork; nothing is sent</td></tr>
+<tr><td><code>macos*.rs</code>, <code>login.rs</code></td><td>macOS menu, checker and Dock PATH; Windows start-at-login via the registry Run key</td></tr>
+</table></div>
+
+<h2 id="state">State &amp; config</h2>
+<ul>
+<li><b>Core state:</b> <code>%LOCALAPPDATA%\herdr-core\&lt;session&gt;\</code> on Windows, <code>~/.local/state/herdr-core/&lt;session&gt;/</code> on Unix. It holds:
+  <ul>
+  <li><code>core.lock</code>, <code>core.json</code>, <code>terminals.json</code>, <code>docs.json</code>, <code>machines.json</code>, <code>peers.json</code></li>
+  <li><code>screens/</code>, <code>files/</code>, <code>execs/</code></li>
+  <li><code>restart-env.json</code>, <code>core.log</code>, <code>holder.log</code></li>
+  </ul>
+  If the machine id changes (a cloned machine), the core forgets its terminals, peers and screens.</li>
+<li><b>Core config:</b> <code>%APPDATA%\herdr-core\config.toml</code> on Windows, <code>~/.config/herdr-core/config.toml</code> on Unix. Fields: <code>shell</code>, <code>history_mb</code>, <code>notes</code>, <code>resume_agents</code>, <code>machine_timeout</code>, <code>socket</code>… Templates live in <code>templates/</code> beside it.</li>
+<li><b>App home:</b> <code>settings.json</code>, <code>keys.json</code>, <code>programs.json</code>, <code>themes/</code>, <code>layouts/</code> (+ <code>.state/</code>), <code>mods/</code>, <code>data/&lt;mod&gt;/</code>, <code>shared.json</code>, <code>view.json</code>, <code>window.json</code> and <code>herdr-app.sock</code>.</li>
+</ul>
+<h2 id="blueprint">Blueprint: a desktop app with a background process per tab</h2>
+<p>This section reuses the same split for any app where each tab drives a long-running worker: an agent, a build, a language server, a browser or an indexer. Workers are long-lived, while windows come and go.</p>
+<div class="fig">
+<svg viewBox="0 0 860 250" role="img" aria-label="Desktop UI with tabs connects over one multiplexed connection to a broker daemon, which talks to a worker host that is the parent of one worker process per tab and supervises the broker">
+<defs><marker id="a4" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0L10,5L0,10z" class="ah"/></marker></defs>
+<rect class="box" x="10" y="20" width="200" height="210" rx="8"/><text class="b" x="26" y="44">Desktop UI</text><text class="m" x="26" y="61">draws · owns tabs &amp; layout</text>
+<rect class="chip" x="26" y="74" width="168" height="34" rx="4"/><text x="38" y="96">Tab A → w1</text>
+<rect class="chip" x="26" y="118" width="168" height="34" rx="4"/><text x="38" y="140">Tab B → w2</text>
+<rect class="chip" x="26" y="162" width="168" height="34" rx="4"/><text x="38" y="184">Tab C → w3, w4</text>
+<rect class="box" x="300" y="20" width="240" height="210" rx="8"/><text class="b" x="316" y="44">Broker daemon</text><text class="m" x="316" y="61">one per user session · the API</text>
+<rect class="chip" x="316" y="74" width="208" height="34" rx="4"/><text x="328" y="96">JSON-RPC + framed channels</text>
+<rect class="chip" x="316" y="118" width="208" height="34" rx="4"/><text x="328" y="140">events · seq · missed</text>
+<rect class="chip" x="316" y="162" width="208" height="34" rx="4"/><text x="328" y="184">registry · docs · snapshots</text>
+<rect class="box" x="630" y="20" width="220" height="210" rx="8"/><text class="b" x="646" y="44">Worker host</text><text class="m" x="646" y="61">parent of every worker</text>
+<rect class="chip" x="646" y="74" width="188" height="34" rx="4"/><text x="658" y="96">w1 · tab A process</text>
+<rect class="chip" x="646" y="118" width="188" height="34" rx="4"/><text x="658" y="140">w2 · tab B process</text>
+<rect class="chip" x="646" y="162" width="188" height="34" rx="4"/><text x="658" y="184">w3 · w4 · tab C</text>
+<path class="ln" d="M210,112H300" marker-start="url(#a4)" marker-end="url(#a4)"/><text class="m" x="255" y="103" text-anchor="middle">1 connection</text><text class="m" x="255" y="128" text-anchor="middle">N channels</text>
+<path class="ln" d="M540,112H630" marker-start="url(#a4)" marker-end="url(#a4)"/><text class="m" x="585" y="103" text-anchor="middle">host link</text>
+<path class="ln dash" d="M630,212H542" marker-end="url(#a4)"/><text class="m" x="585" y="228" text-anchor="middle">respawns</text>
+</svg>
+</div>
+<h3>1 · Processes: three roles, not one</h3>
+<ul>
+<li><b>UI client.</b> It draws, owns tab grouping and layout, and holds no worker as a child. When it quits, crashes or updates, no work is lost.</li>
+<li><b>Broker daemon.</b> One per user session, guarded by a lock file that records its endpoint.
+  <ul>
+  <li>It owns the API, the registry of workers, events, shared documents and per-worker state snapshots.</li>
+  <li>The first client that finds no broker autostarts it detached (<code>connect_starting</code>).</li>
+  </ul></li>
+<li><b>Worker host.</b> It spawns workers, owns their pipes or PTYs, keeps a small output tail per worker, and parses nothing.
+  <ul>
+  <li>Because it is boring, it rarely needs restarting, so the broker can restart or upgrade without killing workers.</li>
+  <li>It supervises the broker: if no broker connects within a grace period, it respawns one with backoff.</li>
+  <li>It runs one instance per build. After an upgrade, the old host drains and exits when its last worker ends.</li>
+  </ul></li>
+<li><b>Workers.</b> One or more per tab, each identified by a flat id (<code>w7</code>, <code>box/w7</code>).
+  <ul>
+  <li>Workers know nothing about tabs.</li>
+  <li>Each gets its own process group on Unix or Job Object on Windows, so it can be killed and swept as a tree.</li>
+  </ul></li>
+</ul>
+<h3>2 · Launch &amp; supervision per OS</h3>
+<pre><code><span class="f">Linux</span>    systemd-run --user <span class="c">(KillMode=process, OOMPolicy=continue, linger)</span>  <span class="p">·</span> fallback setsid
+<span class="f">macOS</span>    launchd one-shot job for the broker <span class="p">·</span> setsid for the host
+<span class="f">Windows</span>  CreateProcessW <span class="k">DETACHED_PROCESS</span> | <span class="k">CREATE_BREAKAWAY_FROM_JOB</span> <span class="p">·</span> Job Object per worker
+<span class="c">// the UI never becomes the parent: closing the window must not close the job</span></code></pre>
+<h3>3 · Communication</h3>
+<ol>
+<li><b>Endpoint:</b> one per session, either a Unix socket in <code>$XDG_RUNTIME_DIR</code> or a named pipe with an ACL for the current user and SYSTEM. It never listens on a TCP port.</li>
+<li><b>Handshake:</b> start with line-delimited JSON-RPC, then switch to framed mode, multiplexing on one connection: <code>[channel][kind][len][payload]</code>.
+  <ul>
+  <li>Channel 0 carries the request/reply calls.</li>
+  <li>Each attached worker stream and each event subscription gets its own channel.</li>
+  </ul></li>
+<li><b>Flow control:</b> per-channel credit. A slow consumer gets a fresh snapshot instead of an unbounded backlog, and a client whose replies pile up past a hard cap is dropped. A frozen tab must never stall the broker.</li>
+<li><b>Events</b> carry a <code>seq</code>. A gap produces <code>missed</code> plus a fresh snapshot, and a heartbeat detects dead links. Clients rebuild their state from snapshot plus events and never poll each worker.</li>
+<li><b>Status:</b> workers report it in-band, the way herdr uses OSC 7501. The broker stores it as reported, and the UI rolls it up per tab by priority: blocked &gt; done &gt; working &gt; idle.</li>
+<li><b>Remote machines:</b> reuse the same protocol over <code>ssh … broker connect</code> on stdio. Addresses gain a machine prefix, and nothing else changes.</li>
+</ol>
+<h3>4 · Tabs ↔ workers</h3>
+<ul>
+<li><b>Grouping data:</b> the UI keeps the tab model, Space → Tab → split tree → worker id. It stores it in the broker as a versioned document written with compare-and-set, so multiple windows and other clients agree. On a conflict it reads the newer version and merges.</li>
+<li><b>Re-placing workers:</b> each worker carries a label naming its tab or space. On every listing the UI reconciles:
+  <ul>
+  <li>it drops panes whose worker is gone;</li>
+  <li>it places labeled workers it isn't showing, such as ones started by scripts, by other workers, or before a crash.</li>
+  </ul></li>
+<li><b>View state:</b> per-screen state (which tab is active, focus, zoom) goes to a local file, not to the shared document.</li>
+<li><b>Closing:</b> closing a tab is an explicit kill call. Quitting the app is not.</li>
+</ul>
+<h3>5 · UI side</h3>
+<ul>
+<li><b>Connection threads:</b> one connection, with a writer thread fed by a channel and a reader thread that routes replies and streams. The UI thread never blocks on I/O.</li>
+<li><b>Attachment:</b> keep every tab's stream attached, and draw only the visible ones. Switching is instant, with no replay.</li>
+<li><b>Ingest:</b> time-box each turn (6 ms), coalesce redraws on a shared clock (33 ms), and redraw immediately just after user input.</li>
+<li><b>Reconnect:</b> when the connection closes, retry every second, bump a generation counter, then reattach every view and re-read the documents.</li>
+</ul>
+<h3>6 · Survival</h3>
+<ul>
+<li><b>Broker upgrade:</b> the broker hands over to the new build. It saves snapshots, tells the host <code>GOODBYE{Handover}</code>, and passes on its environment, while workers keep running.</li>
+<li><b>Broker crash:</b> the host respawns the broker, and the new broker adopts the host's workers, rebuilding their state from the host's tails.</li>
+<li><b>Kept workers:</b> a kept worker that dies restarts with backoff (1.5 s → 60 s), and if it was an agent it resumes its session.</li>
+<li><b>Machine identity:</b> store a machine id. If it changes (a cloned disk), forget the registry instead of adopting workers that don't exist.</li>
+</ul>
+
+<p class="note">Compiled from a read of the source on 2026-11-17. Line numbers drift; module and type names are the stable anchors.</p>
+</main>
+</body>
+</html>
