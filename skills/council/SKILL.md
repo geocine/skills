@@ -28,8 +28,12 @@ it twice.
 | Member | How to run it, read-only |
 | --- | --- |
 | Claude | A fresh subagent through the Agent tool (`general-purpose`, not a fork, so it does not inherit your view). Tell it not to edit. |
-| Codex | `codex exec -s read-only -C <repo> --color never -o <out.md> - < <brief.md>` |
-| Grok | `grok --prompt-file <brief.md> --cwd <repo> --rules "Read-only review. Never create, edit or delete files."` with stdout to `<out.md>` |
+| Codex | `codex exec -s read-only -c model_reasoning_effort="high" -C <repo> --color never -o <out.md> - < <brief.md>` |
+| Grok | `grok --prompt-file <brief.md> --cwd <repo> --reasoning-effort high --rules "Read-only review. Never create, edit or delete files."` with stdout to `<out.md>` |
+
+Codex's read-only is a sandbox. Grok's and Claude's are instructions only, so
+run `git status --porcelain` before the round and after every member finishes,
+and report any change a member made.
 
 Use each provider's strongest model at high reasoning effort unless the user
 names members, models or effort. Check a member answers before the real run
@@ -125,8 +129,12 @@ the user, not into this round's changes.
 
 ## Where things go
 
-- Keep the brief, every member's raw answer and both versions of the sheet in
-  `.council/<date>-<topic>/` at the workspace root, not in a temporary folder.
+- Keep the brief, every member's raw answer, both versions of the sheet and a
+  `reconciliation.md` (the verdict table, the calls you made alone, what is
+  still unsettled) in `.council/<date>-<topic>/` at the workspace root, not in
+  a temporary folder.
+- While a round runs, the brief sits in a folder that holds no member's answer,
+  so no member can read another's. Copy the answers in beside it afterwards.
 - Council output is process. It changes the design; it does not appear in the
   product's documents. No verdict tables, member names or "the council found"
   in the docs themselves. In the Synapse Next docs the build rejects the phrase
