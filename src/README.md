@@ -17,9 +17,9 @@ npx -y @geocine/skills <skill-name> --project
 Examples:
 
 ```bash
-npx -y @geocine/skills frontend-design --project
-npx -y @geocine/skills zinc-design-system --project
-npx -y @geocine/skills skill-creator --global
+npx -y @geocine/skills council --project
+npx -y @geocine/skills architecture-report --project
+npx -y @geocine/skills skill-judge --global
 ```
 
 Omit `--project` for a global install. Add `--copy` if you want copies instead of symlinks.
@@ -34,12 +34,12 @@ Omit `--project` for a global install. Add `--copy` if you want copies instead o
 
 ```bash
 npx -y @geocine/skills
-npx -y @geocine/skills frontend-design --project
-npx -y @geocine/skills install frontend-design --project
-npx -y @geocine/skills add frontend-design --project
+npx -y @geocine/skills council --project
+npx -y @geocine/skills install council --project
+npx -y @geocine/skills add council --project
 npx -y @geocine/skills list
-npx -y @geocine/skills install --skills frontend-design,zinc-design-system --project
-npx -y @geocine/skills install --skills frontend-design --project --copy
+npx -y @geocine/skills install --skills council,skill-judge --project
+npx -y @geocine/skills install --skills council --project --copy
 npx -y @geocine/skills update
 ```
 
