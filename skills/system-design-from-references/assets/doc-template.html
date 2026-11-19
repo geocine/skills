@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>__TITLE__</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#fbfbfa;--fg:#1d1d1b;--mute:#6b6a66;--line:#e2e1dc;--code:#f1f0ec;--acc:#3b6ea8}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#151514;--fg:#e6e5e0;--mute:#9a9892;--line:#2c2b29;--code:#1f1e1c;--acc:#7fa8d8}}
+:root[data-theme="dark"]{--bg:#151514;--fg:#e6e5e0;--mute:#9a9892;--line:#2c2b29;--code:#1f1e1c;--acc:#7fa8d8}
+*{box-sizing:border-box}
+:root{--sans:"Inter",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;--mono:"JetBrains Mono",ui-monospace,"Cascadia Code",Consolas,monospace;
+--hl-c:#8a8780;--hl-k:#a3326b;--hl-f:#2f6aa8;--hl-s:#3f7a3a;--hl-n:#a2611b;--hl-t:#6b52a8}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--hl-c:#7c7a74;--hl-k:#e07fae;--hl-f:#82b3e8;--hl-s:#9ccc8a;--hl-n:#e6ac6c;--hl-t:#b9a2ef}}
+:root[data-theme="dark"]{--hl-c:#7c7a74;--hl-k:#e07fae;--hl-f:#82b3e8;--hl-s:#9ccc8a;--hl-n:#e6ac6c;--hl-t:#b9a2ef}
+:root{--card:#fff;--line2:#c9c7c0}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--card:#1c1b1a;--line2:#3d3c39}}
+:root[data-theme="dark"]{--card:#1c1b1a;--line2:#3d3c39}
+/* diagram categories, drawn from the highlight palette */
+:root{--ui:var(--hl-f);--mw:var(--hl-n);--svc:var(--mute);--store:var(--hl-s);--native:var(--hl-t);--warn:var(--hl-k);
+--ui-bg:color-mix(in srgb,var(--ui) 10%,var(--card));--mw-bg:color-mix(in srgb,var(--mw) 10%,var(--card));
+--svc-bg:color-mix(in srgb,var(--svc) 8%,var(--card));--store-bg:color-mix(in srgb,var(--store) 10%,var(--card));
+--native-bg:color-mix(in srgb,var(--native) 10%,var(--card));--warn-bg:color-mix(in srgb,var(--warn) 10%,var(--card))}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.7 var(--sans);font-feature-settings:"cv11","ss01";-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+main{max-width:880px;margin:0 auto;padding:56px 16px 112px}
+h1{font-size:32px;line-height:1.2;margin:0 0 8px;letter-spacing:-.022em;font-weight:700}
+h2{font-size:22px;line-height:1.3;margin:64px 0 12px;padding-top:24px;border-top:1px solid var(--line);letter-spacing:-.014em;font-weight:650}
+h2 .num{color:var(--mute);font-weight:500;margin-right:10px;font-variant-numeric:tabular-nums}
+h3{font-size:12.5px;margin:32px 0 8px;color:var(--mute);text-transform:uppercase;letter-spacing:.08em;font-weight:600}
+p{margin:10px 0;max-width:72ch}
+b{font-weight:600}
+.sub{color:var(--mute);margin:0 0 12px;font-size:17px;max-width:68ch}
+nav{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:14px;font-weight:500}
+a{color:var(--acc);text-decoration:none}a:hover{text-decoration:underline}
+a:focus-visible{outline:2px solid var(--acc);outline-offset:2px;border-radius:3px}
+code{font:.86em/1.4 var(--mono);background:var(--code);padding:.1em .35em;border-radius:4px;font-variant-ligatures:none}
+pre{font:13.5px/1.7 var(--mono);background:var(--code);padding:18px 20px;border-radius:8px;overflow-x:auto;margin:14px 0;font-variant-ligatures:none;tab-size:2}
+pre code{background:none;padding:0;font-size:inherit}
+.c{color:var(--hl-c);font-style:italic}.k{color:var(--hl-k);font-weight:600}.f{color:var(--hl-f)}.s{color:var(--hl-s)}.n{color:var(--hl-n)}.t{color:var(--hl-t)}.p{color:var(--mute)}
+ul,ol{padding-left:22px;margin:10px 0;max-width:72ch}li{margin:5px 0}li>ul,li>ol{margin:4px 0}
+table{width:100%;border-collapse:collapse;font-size:15px;margin:10px 0}
+th,td{text-align:left;vertical-align:top;padding:6px 8px;border-bottom:1px solid var(--line)}
+th{color:var(--mute);font-weight:500}
+.tablewrap{overflow-x:auto}
+.note{color:var(--mute);font-size:13px}
+.callout{border-left:2px solid var(--acc);padding:2px 0 2px 14px;margin:16px 0;max-width:72ch}
+.callout.warn{border-color:var(--warn)}
+.callout p{margin:0}
+
+/* hero */
+header.hero{margin-bottom:24px}
+.legend{display:flex;flex-wrap:wrap;gap:6px 18px;margin:16px 0 0;font-size:13px;color:var(--mute)}
+.legend span{display:inline-flex;align-items:center;gap:7px}
+.legend i{width:12px;height:12px;border-radius:3px;border:1.25px solid;display:inline-block}
+.lg-ui{background:var(--ui-bg);border-color:var(--ui)!important}
+.lg-mw{background:var(--mw-bg);border-color:var(--mw)!important}
+.lg-svc{background:var(--svc-bg);border-color:var(--svc)!important}
+.lg-store{background:var(--store-bg);border-color:var(--store)!important}
+.lg-native{background:var(--native-bg);border-color:var(--native)!important}
+
+/* figures */
+figure{margin:16px 0;overflow-x:auto}
+figure svg{display:block;width:100%;min-width:640px;height:auto}
+figcaption{color:var(--mute);font-size:13px;margin-top:8px;max-width:80ch}
+svg text{font:12px var(--sans);fill:var(--fg)}
+svg .tt{font-weight:600;font-size:13px}
+svg .ts{fill:var(--mute);font-size:11px}
+svg .tm{font-family:var(--mono);font-size:10.5px;fill:var(--mute)}
+svg .bl{font-size:12px;font-weight:600;fill:var(--mute)}
+svg .lbl{font-size:11.5px;fill:var(--fg);paint-order:stroke;stroke:var(--bg);stroke-width:5px;stroke-linejoin:round}
+svg .band{fill:var(--code)}
+svg .n rect{stroke-width:1.25}
+svg .ui rect{fill:var(--ui-bg);stroke:var(--ui)}
+svg .mw rect{fill:var(--mw-bg);stroke:var(--mw)}
+svg .svc rect{fill:var(--svc-bg);stroke:var(--line2)}
+svg .store rect{fill:var(--store-bg);stroke:var(--store)}
+svg .native rect{fill:var(--native-bg);stroke:var(--native)}
+svg .warnb rect{fill:var(--warn-bg);stroke:var(--warn)}
+svg .frame{fill:none;stroke:var(--line2);stroke-width:1.25}
+svg .ar{stroke:var(--acc);stroke-width:1.5;fill:none}
+svg .d{stroke-dasharray:4 3}
+svg .life{stroke:var(--line2);stroke-width:1.25;stroke-dasharray:4 4}
+svg .ahp{fill:var(--acc)}
+svg .lk{stroke-width:1.25;fill:none;opacity:.7}
+svg .lk-ui{stroke:var(--ui)} svg .lk-mw{stroke:var(--mw)} svg .lk-svc{stroke:var(--svc)}
+svg .warn-t{fill:var(--warn);font-size:12.5px;font-weight:600}
+svg .tick{fill:var(--line2)}
+svg .pin{fill:var(--mw);stroke:var(--bg);stroke-width:2}
+svg .ok-t{fill:var(--store);font-size:12.5px;font-weight:600}
+@media print{nav{display:none}}
+.flow{display:flex;flex-wrap:wrap;align-items:stretch;gap:8px;margin:16px 0}
+.step{flex:1 1 120px;background:var(--card);border:1px solid var(--line2);border-radius:6px;padding:8px 10px;font-size:13px;position:relative}
+.step b{display:block;font-weight:600}
+.step span{color:var(--mute);font-size:12px}
+.step:not(:last-child)::after{content:"→";position:absolute;right:-9px;top:50%;transform:translateY(-50%);color:var(--acc);font-size:13px;background:var(--bg);line-height:1}
+.bytes{display:flex;margin:14px 0 4px;font:13px/1.3 var(--mono);border:1px solid var(--line2);border-radius:8px;overflow:hidden;min-width:0}
+.bytes>div{padding:10px 8px;border-right:1px solid var(--line2);background:var(--card);min-width:0}
+.bytes>div:last-child{border-right:0}
+.bytes b{display:block;font-weight:600;color:var(--hl-f)}
+.bytes span{color:var(--mute);font-size:12px}
+.bytes i{display:block;font-style:normal;color:var(--hl-n);font-size:11px;margin-bottom:2px}
+/* theme toggle */
+:root{color-scheme:light dark}:root[data-theme="light"]{color-scheme:light}:root[data-theme="dark"]{color-scheme:dark}
+.theme-toggle{position:fixed;top:12px;right:12px;z-index:10;display:flex;gap:2px;padding:3px;background:var(--card);border:1px solid var(--line2);border-radius:8px;font:500 12px/1 var(--sans)}
+.theme-toggle button{border:0;background:none;color:var(--mute);padding:6px 10px;border-radius:5px;cursor:pointer;font:inherit}
+.theme-toggle button:hover{color:var(--fg)}
+.theme-toggle button[aria-pressed="true"]{background:var(--code);color:var(--fg)}
+.theme-toggle button:focus-visible{outline:2px solid var(--acc);outline-offset:1px}
+@media print{.theme-toggle{display:none}}
+/* master plan additions */
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px;margin:14px 0}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px 16px;font-size:14.5px;line-height:1.55}
+.card h4{margin:0 0 6px;font-size:14.5px;font-weight:650}
+.card p{margin:4px 0}
+.card ul{margin:4px 0;padding-left:18px}
+.k-num{color:var(--acc);font-weight:700;margin-right:6px;font-variant-numeric:tabular-nums}
+.statement{font-size:18px;line-height:1.55;font-weight:400;max-width:68ch;margin:14px 0}
+.lede{font-size:17px;line-height:1.6;font-weight:400;color:var(--fg);max-width:68ch}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:14px 0}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+.kpi b{display:block;font-size:22px;font-weight:700;letter-spacing:-.01em}
+.kpi span{color:var(--mute);font-size:12.5px;line-height:1.4;display:block}
+td.nowrap,th.nowrap{white-space:nowrap}
+table.dense{font-size:14px}
+.src{font-size:12.5px;color:var(--mute)}
+svg .arw{stroke:var(--warn);stroke-width:1.5;fill:none}
+svg .ahw{fill:var(--warn)}
+svg .warn-l{fill:var(--warn)}
+svg .gate{fill:var(--warn)}
+svg .seam{fill:var(--acc);font-weight:600;font-size:11.5px}
+svg .grid{stroke:var(--line);stroke-width:1}
+.contract{margin:30px 0 10px}
+.contract h4{font-size:16px;font-weight:650;margin:0 0 2px;letter-spacing:-.005em}
+.contract h4 .sid{color:var(--acc);margin-right:10px;font-variant-numeric:tabular-nums}
+.contract .purpose{color:var(--mute);margin:0 0 10px;font-size:14.5px;max-width:none}
+.contract pre{margin:8px 0 10px}
+.contract ul{font-size:14.5px;margin:6px 0 0;max-width:none}
+svg .ar{stroke-width:1.8}
+svg .arw{stroke-width:1.8}
+svg .ar.d{stroke-dasharray:5 3}
+ol.steps{padding-left:22px;margin:8px 0;font-size:14.5px;max-width:none}
+ol.steps li{margin:6px 0;padding-left:4px}
+[id]{scroll-margin-top:16px}
+a.ref{color:var(--acc);text-decoration:none;border-bottom:1px dotted currentColor;cursor:pointer;white-space:nowrap}
+a.ref:hover,a.ref[aria-expanded="true"]{border-bottom-style:solid;text-decoration:none}
+.refpop{position:absolute;z-index:30;max-width:400px;width:max-content;background:var(--card);color:var(--fg);border:1px solid var(--line2);border-radius:10px;box-shadow:0 10px 30px rgba(0,0,0,.2);padding:12px 14px;font-size:13.5px;line-height:1.5}
+.refpop p{margin:4px 0;max-width:none}
+.refpop-h{font-weight:650;margin-bottom:6px}
+.refpop-go{display:inline-block;margin-top:8px;font-weight:600}
+@media (max-width:480px){.refpop{max-width:calc(100vw - 24px)}}
+@keyframes refflash{from{background:color-mix(in srgb,var(--acc) 24%,transparent)}to{background:transparent}}
+.flash,tr.flash>td{animation:refflash 1.8s ease-out}
+svg .tick-a{stroke:var(--mute);stroke-width:1.5}
+svg .tick-b{stroke:var(--acc);stroke-width:3.5;stroke-linecap:round}
+svg .budget{stroke:var(--warn);stroke-width:1.6;stroke-dasharray:5 4}
+svg .zone{fill:var(--code);stroke:none}
+svg .wall{stroke:var(--warn);stroke-width:2;stroke-dasharray:7 5}
+.crumb,.html-section .crumb{max-width:none}
+
+table tr.grp th{background:var(--code);text-align:left;font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--fg2,inherit);padding-top:10px}
+td.enf{font-size:12.5px;min-width:260px}
+td.enf .enf-proof{display:block;margin-top:4px;color:var(--muted,inherit);opacity:.8;font-size:12px}
+.how{max-width:72ch;margin:10px 0 4px}
+.how .how-h{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--mute);margin:12px 0 4px;font-weight:600}
+.how p{margin:4px 0 8px}
+svg .n.self rect{stroke-width:2.6}
+/* generated diagrams keep one scale (their max-width); they are never stretched to a minimum width */
+figure svg[style*="max-width"]{min-width:0;margin-left:auto;margin-right:auto}
+svg .n.s4 rect{fill:var(--code);stroke:var(--line2)}
+/* Synapse 4 → Synapse Next contrast: a calm panel near the top of every section */
+.contrast{margin:16px 0 20px;padding:12px 16px 6px;border:1px solid var(--line);border-radius:10px;background:var(--code)}
+.contrast .contrast-h{font-size:11.5px;letter-spacing:.07em;text-transform:uppercase;color:var(--mute);font-weight:600;margin:0 0 4px}
+.contrast .contrast-lead{margin:0 0 8px;font-weight:550}
+.contrast table{background:transparent}
+.contrast th{font-size:12px}
+.contrast td:first-child{color:var(--mute)}
+</style>
+<script>
+(function(){
+  var KEY="doc-theme", root=document.documentElement;
+  function apply(t){ if(t==="light"||t==="dark") root.setAttribute("data-theme",t); else root.removeAttribute("data-theme"); }
+  try{ apply(localStorage.getItem(KEY)); }catch(e){}
+  document.addEventListener("DOMContentLoaded",function(){
+    var group=document.createElement("div");
+    group.className="theme-toggle"; group.setAttribute("role","group"); group.setAttribute("aria-label","Colour theme");
+    function sync(){ var cur=root.getAttribute("data-theme")||"system";
+      group.querySelectorAll("button").forEach(function(b){ b.setAttribute("aria-pressed", String(b.dataset.v===cur)); }); }
+    ["dark","light","system"].forEach(function(v){
+      var b=document.createElement("button"); b.type="button"; b.dataset.v=v;
+      b.textContent=v.charAt(0).toUpperCase()+v.slice(1);
+      b.addEventListener("click",function(){
+        try{ if(v==="system") localStorage.removeItem(KEY); else localStorage.setItem(KEY,v); }catch(e){}
+        apply(v); sync(); });
+      group.appendChild(b); });
+    document.body.appendChild(group); sync();
+  });
+})();
+</script>
+<style>
+/* docs-site layout */
+.layout{display:grid;grid-template-columns:256px minmax(0,1fr);min-height:100vh}
+.side{position:sticky;top:0;height:100vh;overflow-y:auto;border-right:1px solid var(--line);padding:22px 14px 28px;font-size:13.5px;background:var(--bg)}
+.brand{display:block;font-weight:700;font-size:15px;letter-spacing:-.01em;color:var(--fg);margin:0 0 4px}
+.side-h{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--mute);font-weight:600;margin:18px 0 6px}
+.docs a,.toc a{display:flex;gap:8px;align-items:baseline;color:var(--mute);padding:3px 6px;border-radius:5px;line-height:1.4}
+.docs a[aria-current="page"]{color:var(--fg);font-weight:600}
+.toc a i{font:600 11px/1.6 var(--mono);font-style:normal;opacity:.8;min-width:18px}
+.docs a:hover,.toc a:hover{color:var(--fg);text-decoration:none}.toc a.active{color:var(--fg);font-weight:600;background:var(--code)}
+.side nav{display:block}.side .legend{flex-direction:column;gap:6px;margin:0}
+.layout>main{max-width:940px;margin:0 auto;padding:56px 40px 112px;min-width:0;width:100%}
+.lg-b-process{background:var(--code);border-color:var(--line2)!important}.lg-b-code{border-style:dotted!important;border-color:var(--ui)!important}
+.lg-b-trust{border-style:dashed!important;border-color:var(--warn)!important}.lg-b-machine{border-style:dashed!important;border-color:var(--mute)!important}
+.lg-b-network{border-style:dotted!important;border-color:var(--mute)!important}
+@media (max-width:960px){.layout{display:block}.side{position:static;height:auto;border-right:0;border-bottom:1px solid var(--line);padding:56px 16px 16px}
+.side nav{display:flex;flex-wrap:wrap;gap:2px 6px}.side .legend{flex-direction:row}.layout>main{padding:40px 16px 96px}.theme-toggle{position:absolute}}
+@media print{.side{display:none}.layout{display:block}}
+/* typed boundaries: <g class="bd b-process|b-code|b-trust|b-machine|b-network"><rect/><text/></g> */
+svg .bd rect{fill:none;stroke-width:1.5}svg .bd text{font-size:11.5px;font-weight:600;fill:var(--mute)}
+svg .b-process rect{fill:var(--code);stroke:var(--line2)}svg .b-code rect{stroke:var(--ui);stroke-dasharray:2 3}svg .b-code text{fill:var(--ui)}
+svg .b-trust rect{stroke:var(--warn);stroke-dasharray:7 4}svg .b-trust text{fill:var(--warn)}
+svg .b-machine rect{stroke:var(--mute);stroke-dasharray:14 5}svg .b-network rect{stroke:var(--mute);stroke-dasharray:2 4}
+/* figure hover: <g class="n .." data-n="id" data-d="detail">, edges and labels carry data-e="from to" */
+svg .n[data-n]{cursor:pointer}svg .n rect,svg .ar,svg .arw,svg .lbl{transition:opacity .15s}
+svg.dim .n:not(.on):not(.peer){opacity:.55}svg.dim .ar:not(.on),svg.dim .arw:not(.on),svg.dim .lbl:not(.on){opacity:.35}svg .n.on rect{stroke-width:2.4}
+/* glossary terms: <a class="term" href="#g-x"> to a glossary row <tr id="g-x"> */
+a.term{color:inherit;text-decoration:underline dotted color-mix(in srgb,var(--acc) 70%,transparent);text-underline-offset:3px;text-decoration-thickness:1.5px;cursor:pointer}
+a.term:hover,a.term[aria-expanded="true"]{text-decoration-style:solid;color:var(--acc)}
+.tip{position:fixed;z-index:50;max-width:min(340px,calc(100vw - 24px));background:var(--card);color:var(--fg);border:1px solid var(--line2);border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,.18);padding:11px 14px;font-size:13px;line-height:1.5}
+.tip:not(.pin){pointer-events:none}.tip.pin{max-height:min(70vh,520px);overflow:auto}
+.tip b{display:block;font-size:13.5px;font-weight:650;margin:0 0 3px;padding-right:22px}.tip p{margin:4px 0;max-width:none}.tip ul{margin:6px 0 0;padding:0;list-style:none}
+.tip small{display:block;margin-top:6px;color:var(--mute);font-size:12px}
+.tip .x{position:absolute;top:7px;right:7px;width:24px;height:24px;border:0;border-radius:6px;background:none;color:var(--mute);font-size:17px;cursor:pointer}.tip .x:hover{background:var(--code);color:var(--fg)}
+</style>
+<script>
+document.addEventListener("DOMContentLoaded",function(){
+ var $=function(s,r){return(r||document).querySelectorAll(s)},T=function(e){return e?(e.textContent||"").replace(/\s+/g," ").trim():""};
+ /* section TOC from <section id><h2><span class="num">n</span>Title</h2>, with the active section */
+ var toc=document.querySelector(".toc"),links={},secs=[];
+ if(toc)$("main section[id]").forEach(function(s){var h=s.querySelector("h2");if(!h)return;var n=h.querySelector(".num"),a=document.createElement("a");
+  a.href="#"+s.id;a.innerHTML="<i></i><span></span>";a.firstChild.textContent=T(n);a.lastChild.textContent=h.dataset.toc||T(h).slice(T(n).length).trim();toc.appendChild(a);links[s.id]=a;secs.push(s)});
+ if(toc&&"IntersectionObserver"in window){var io=new IntersectionObserver(function(es){es.forEach(function(e){if(!e.isIntersecting)return;var id=e.target.closest("section").id;
+   $(".toc a.active").forEach(function(a){a.classList.remove("active")});links[id]&&links[id].classList.add("active")})},{rootMargin:"0px 0px -70% 0px"});
+  secs.forEach(function(s){io.observe(s.querySelector("h2"))})}
+ /* one floating card: hover previews, click pins; Esc, x or outside click closes */
+ var tip=document.createElement("div");tip.className="tip";tip.hidden=true;document.body.appendChild(tip);var pinned=null;
+ function place(el){var r=el.getBoundingClientRect(),w=tip.offsetWidth,h=tip.offsetHeight,x=Math.min(Math.max(8,r.left),innerWidth-w-8),y=r.bottom+8;if(y+h>innerHeight-8)y=Math.max(8,r.top-h-8);tip.style.left=x+"px";tip.style.top=y+"px"}
+ function show(el,html,pin){tip.innerHTML=html;tip.classList.toggle("pin",!!pin);tip.hidden=false;place(el);
+  if(pin){var x=document.createElement("button");x.className="x";x.type="button";x.setAttribute("aria-label","Close");x.textContent="×";x.onclick=close;tip.prepend(x);pinned=el;el.setAttribute("aria-expanded","true")}}
+ function hide(){if(!pinned)tip.hidden=true}
+ function close(){if(pinned)pinned.removeAttribute("aria-expanded");pinned=null;tip.hidden=true}
+ document.addEventListener("keydown",function(e){if(e.key==="Escape")close()});
+ document.addEventListener("click",function(e){if(pinned&&!tip.contains(e.target)&&e.target.closest("a.term")!==pinned)close()});
+ addEventListener("scroll",function(){if(!tip.hidden&&!pinned)tip.hidden=true},{passive:true});
+ function def(a){var t=document.getElementById((a.getAttribute("href")||"").slice(1));if(!t)return null;
+  if(t.tagName==="TR"){var c=t.querySelectorAll("td");return"<b>"+(c[0]?c[0].innerHTML:"")+"</b><p>"+(c[1]?c[1].innerHTML:"")+"</p>"}
+  if(t.tagName==="DT"){var d=t.nextElementSibling;return"<b>"+t.innerHTML+"</b><p>"+(d?d.innerHTML:"")+"</p>"}return null}
+ $("a.term").forEach(function(a){
+  a.addEventListener("mouseenter",function(){if(!pinned){var d=def(a);d&&show(a,d+"<small>Click to pin</small>")}});
+  a.addEventListener("mouseleave",hide);
+  a.addEventListener("click",function(e){var d=def(a);if(!d)return;e.preventDefault();e.stopPropagation();close();show(a,d+'<small><a href="'+a.getAttribute("href")+'">Glossary entry</a></small>',true)})});
+ $("figure svg").forEach(function(svg){
+  $(".n[data-n]",svg).forEach(function(n){var id=n.dataset.n,ed=[].filter.call($("[data-e]",svg),function(e){return e.dataset.e.split(" ").indexOf(id)>=0});
+   if(!ed.length)return;n.setAttribute("tabindex","0");
+   function on(){svg.classList.add("dim");n.classList.add("on");var li=[];
+    ed.forEach(function(e){e.classList.add("on");var p=e.dataset.e.split(" "),o=p[0]===id?p[1]:p[0],pn=svg.querySelector('.n[data-n="'+o+'"]');pn&&pn.classList.add("peer");
+     if(e.classList.contains("lbl")){var t=pn&&pn.querySelector(".tt");li.push("<li>"+(p[0]===id?"→ ":"← ")+(t?T(t):o)+": "+T(e)+"</li>")}});
+    var tt=n.querySelector(".tt");if(!pinned)show(n,"<b>"+(tt?T(tt):id)+"</b>"+(n.dataset.d?"<p>"+n.dataset.d+"</p>":"")+(li.length?"<ul>"+li.join("")+"</ul>":""))}
+   function off(){svg.classList.remove("dim");$(".on,.peer",svg).forEach(function(e){e.classList.remove("on","peer")});hide()}
+   n.addEventListener("mouseenter",on);n.addEventListener("mouseleave",off);n.addEventListener("focus",on);n.addEventListener("blur",off)})});
+});
+</script>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path class="ahp" d="M0,0 L10,5 L0,10 z"/>
+    </marker>
+    <marker id="ahw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path class="ahw" d="M0,0 L10,5 L0,10 z"/>
+    </marker>
+  </defs>
+</svg>
+
+<!--
+  TEMPLATE for documents produced by the system-design-from-references skill.
+  Copy this file, replace every __PLACEHOLDER__, delete the sections you do not need, and keep
+  the markup patterns: they are the Synapse Next documents' own, so the CSS above styles them.
+
+  Diagram vocabulary (inside <svg>):
+    <g class="n KIND" transform="translate(x,y)"><rect width height rx="6"/>
+      <text class="tt" x="12" y="22">Title</text><text class="ts" x="12" y="40">subtitle</text>
+      (each further subtitle line +16; height = last baseline + 12 or more, so text never touches the edge)
+    KIND: ui (UI and clients) · mw (core) · svc (supporting services) · store (state and IPC)
+          native (hardware, sidecars, privileged) · warnb (warning / problem)
+    arrows: <path class="ar" d="..." marker-end="url(#ah)"/>   add class "d" for async/dashed
+            <path class="arw" ... marker-end="url(#ahw)"/>      warning-coloured arrow
+    arrow labels: <text class="lbl">  (has a halo, safe over lines)   band label: <text class="bl">
+    typed boundaries: <g class="bd b-process|b-code|b-trust|b-machine|b-network"><rect/><text/></g>
+      (older untyped forms: <rect class="band">, <rect class="frame">, <line class="wall">)
+    sequence diagrams: <line class="life"> lifelines, <text class="tm"> timings
+    hover: data-n="id" data-d="one-line detail" on a box <g>; data-e="from to" on its arrows and
+      arrow labels. Hover dims the rest lightly and shows one card listing the box's connections.
+  Draw order: boundaries, boxes, arrows, labels. Arrow ends touch box edges.
+
+  Layout: the sidebar lists both documents (mark the current one aria-current="page"); its TOC is
+  built from <section id><h2><span class="num">; keep only the legend entries a document uses.
+  Glossary terms: <a class="term" href="#g-x">word</a> -> glossary row <tr id="g-x">; hover
+  previews, click pins.
+
+  Content vocabulary: p.statement · p.lede · div.tablewrap > table.dense · div.cards > div.card
+    div.kpis > div.kpi · div.contract (with span.sid, ol.steps, p.purpose) · div.flow > div.step
+    pre > code with span.k (keyword) .t (type) .s (string) .c (comment) .f (function)
+    div.bytes (wire layout) · p.note · table.dense.glossary
+  Ids D#, S-#, I-#, E#, M# in the first cell of a table row become link targets; mentions of them
+  anywhere in the text are linked with a popover card by the script at the end.
+-->
+
+<div class="layout">
+<aside class="side">
+  <a class="brand" href="#top">__DESIGN NAME__</a>
+  <div class="side-h">Documents</div>
+  <nav class="docs" aria-label="Documents">
+    <a href="__DESIGN__-architecture.html" aria-current="page">Architecture</a>
+    <a href="__DESIGN__-master-plan.html">Build plan</a>
+  </nav>
+  <div class="side-h">On this page</div>
+  <nav class="toc" aria-label="Sections"></nav>
+  <div class="side-h">Legend</div>
+  <div class="legend" aria-label="Diagram colour key">
+    <span><i class="lg-ui"></i>UI and clients</span>
+    <span><i class="lg-mw"></i>Core</span>
+    <span><i class="lg-svc"></i>Supporting services</span>
+    <span><i class="lg-store"></i>State and IPC</span>
+    <span><i class="lg-native"></i>Hardware, sidecars, privileged</span>
+    <span><i class="lg-b-process"></i>Process boundary</span>
+    <span><i class="lg-b-trust"></i>Trust boundary</span>
+    <span><i class="lg-b-machine"></i>Machine boundary</span>
+  </div>
+</aside>
+<main id="top">
+<header class="hero">
+  <h1>__TITLE__</h1>
+  <p class="sub"><b>__DOCUMENT ROLE: "Architecture: what we build and why." or "Build plan: how and when."__</b> The companion document is <a href="__OTHER__.html">__OTHER TITLE__</a>.</p>
+  <p class="sub">__Two or three assertive sentences: what the system is, its shape, and the one idea that makes it work. Name an <a class="term" href="#g-actor">actor</a> as a glossary term.__</p>
+</header>
+
+<!-- 1 -->
+<section id="system">
+<h2><span class="num">1</span>System</h2>
+<p class="statement">__One paragraph that states the design as fact.__</p>
+<figure>
+<svg viewBox="0 0 900 240" role="img" aria-label="__CLAIM: the settings UI sends a request over S-1 to the router inside the daemon process; the router hands it to the keyboard actor, which writes a report to the device and persists the applied value to the store.__">
+<g class="bd b-process"><rect x="200" y="20" width="470" height="200" rx="10"/><text x="216" y="42">daemon · one process</text></g>
+<g class="n ui" data-n="ui" data-d="Shows state; never touches a device." transform="translate(20,70)"><rect width="150" height="56" rx="6"/><text class="tt" x="12" y="22">Settings UI</text><text class="ts" x="12" y="40">client · view only</text></g>
+<g class="n mw" data-n="router" data-d="Stateless; resolves the target actor." transform="translate(220,70)"><rect width="200" height="56" rx="6"/><text class="tt" x="12" y="22">Router</text><text class="ts" x="12" y="40">feature → device</text></g>
+<g class="n mw" data-n="kb" data-d="The only writer for its device (I-1)." transform="translate(450,70)"><rect width="200" height="56" rx="6"/><text class="tt" x="12" y="22">Keyboard actor</text><text class="ts" x="12" y="40">one per device</text></g>
+<g class="n store" data-n="store" transform="translate(450,150)"><rect width="200" height="50" rx="6"/><text class="tt" x="12" y="22">Store</text><text class="ts" x="12" y="40">intent + applied</text></g>
+<g class="n native" data-n="dev" transform="translate(720,70)"><rect width="160" height="56" rx="6"/><text class="tt" x="12" y="22">Device</text><text class="ts" x="12" y="40">USB HID</text></g>
+<path class="ar" data-e="ui router" d="M170 98 H218" marker-end="url(#ah)"/><path class="ar" data-e="router kb" d="M420 98 H448" marker-end="url(#ah)"/><path class="ar" data-e="kb dev" d="M650 98 H718" marker-end="url(#ah)"/><path class="ar d" data-e="kb store" d="M550 126 V148" marker-end="url(#ah)"/>
+<text class="lbl" data-e="ui router" x="194" y="88" text-anchor="middle">S-1</text><text class="lbl" data-e="kb dev" x="684" y="88" text-anchor="middle">report</text><text class="lbl" data-e="kb store" x="560" y="141">persist</text>
+</svg>
+<figcaption>__What the picture proves, in one or two sentences, citing ids (D1, I-1).__</figcaption>
+</figure>
+<div class="tablewrap"><table class="dense">
+<tr><th>Component</th><th>Owns</th><th>Guarantees</th><th>Appears in diagrams as</th></tr>
+<tr><td><b>Device actor</b></td><td>__one device: its links and settings__</td><td>__one command at a time__</td><td>Keyboard actor, Mouse actor</td></tr>
+<tr><td><b>Router</b></td><td>__nothing; it is stateless__</td><td>__every request reaches exactly one actor__</td><td>Router</td></tr>
+</table></div>
+<div class="cards">
+  <div class="card"><h4>__Point__</h4><p>__One short paragraph.__</p></div>
+  <div class="card"><h4>__Point__</h4><p>__One short paragraph.__</p></div>
+  <div class="card"><h4>__Point__</h4><p>__One short paragraph.__</p></div>
+</div>
+</section>
+
+<!-- 2 -->
+<section id="decisions">
+<h2><span class="num">2</span>Decisions</h2>
+<p class="lede">Every decision adopts a mechanism described in the reference architecture reports, or a blend of them; the target's constraints only choose between them.</p>
+<div class="tablewrap"><table class="dense">
+<tr><th>#</th><th>Decision</th><th>Basis</th><th>Owner</th></tr>
+<tr><td>D1</td><td><b>__Topic.__</b> __The decision, stated as fact.__</td><td>__name-architecture.html#section__</td><td>__Area__</td></tr>
+<tr><td>D2</td><td><b>__Topic.__</b> __The decision.__</td><td>__name-architecture.html#section; other-architecture.html#section__</td><td>__Area__</td></tr>
+</table></div>
+</section>
+
+<!-- 3 -->
+<section id="interfaces">
+<h2><span class="num">3</span>Interfaces</h2>
+<p class="lede">__Every seam between components, its contract, and how it versions.__</p>
+<div class="contract" id="s1">
+<h4><span class="sid">S-1</span>__UI ↔ daemon__</h4>
+<p class="purpose"><b>Purpose:</b> __what crosses this seam and why it exists.__</p>
+<pre><code><span class="k">pub enum</span> <span class="t">Request</span> {
+    <span class="t">SetSetting</span> { device: <span class="t">DeviceId</span>, key: <span class="t">Key</span>, value: <span class="t">Value</span> },   <span class="c">// replaces any older value for the same key</span>
+}</code></pre>
+</div>
+<div class="tablewrap"><table class="dense">
+<tr><th>#</th><th>Seam</th><th>Encoding</th><th>Versioning</th></tr>
+<tr><td>S-1</td><td>__UI ↔ daemon__</td><td>__length-prefixed protobuf__</td><td>__additive only; N and N-1 both served__</td></tr>
+</table></div>
+<div class="tablewrap"><table class="dense">
+<tr><th>#</th><th>Invariant</th><th>Proved by</th></tr>
+<tr><td>I-1</td><td>__One writer per device.__</td><td>__property test + scenario w1__</td></tr>
+</table></div>
+</section>
+
+<!-- 4 -->
+<section id="walkthroughs">
+<h2><span class="num">4</span>Walkthroughs</h2>
+<p class="lede">__The running example, traced hop by hop.__</p>
+<div class="contract" id="w1">
+<h4><span class="sid">W1</span>__The user changes one setting on the example product__</h4>
+<ol class="steps">
+<li>__The UI sends a request over S-1.__</li>
+<li>__The router resolves the device and hands the request to its actor (D1).__</li>
+<li>__The actor writes the report; the store records the applied value (I-1).__</li>
+</ol>
+<p class="purpose"><b>If the device doesn't answer:</b> __what the user sees and what retries.__</p>
+</div>
+<div class="flow">
+  <div class="step"><b>__Stage__</b><span>__what happens__</span></div>
+  <div class="step"><b>__Stage__</b><span>__what happens__</span></div>
+  <div class="step"><b>__Stage__</b><span>__what happens__</span></div>
+</div>
+</section>
+
+<!-- 5 -->
+<section id="roadmap">
+<h2><span class="num">5</span>Milestones and gates</h2>
+<div class="kpis">
+  <div class="kpi"><b>__≤ 1 day__</b><span>__metric and when it applies__</span></div>
+  <div class="kpi"><b>__≥ 95%__</b><span>__metric and when it applies__</span></div>
+</div>
+<div class="tablewrap"><table class="dense">
+<tr><th>#</th><th>Milestone</th><th>Weeks</th><th>Exit criteria</th></tr>
+<tr><td>M1</td><td>__First device end to end__</td><td>__4–8__</td><td>__observable criteria__</td></tr>
+</table></div>
+<div class="tablewrap"><table class="dense">
+<tr><th>#</th><th>Epic</th><th>Lane</th><th>Depends on</th><th>Done when</th></tr>
+<tr><td>E1</td><td>__Core runtime__</td><td>__A__</td><td>__–__</td><td>__W1 runs green in the simulator__</td></tr>
+</table></div>
+</section>
+
+<!-- A -->
+<section id="glossary">
+<h2><span class="num">A</span>Glossary</h2>
+<div class="tablewrap"><table class="dense glossary">
+<tr><th>Term</th><th>Meaning</th></tr>
+<tr id="g-actor"><td><b>Actor</b></td><td>__One task that owns one thing (here, one device) and handles its messages one at a time.__</td></tr>
+<tr id="g-acronym"><td><b>__ACRONYM__</b></td><td>__Expansion: what it means here__</td></tr>
+</table></div>
+</section>
+
+<!-- B -->
+<section id="sources">
+<h2><span class="num">B</span>References</h2>
+<ul>
+<li><a href="__name__-architecture.html">__Reference report__</a>: __what it taught this design__</li>
+</ul>
+<p class="note">Clean room: every decision in this design comes from the reference architecture reports above; no reference source code was read by the design side.</p>
+</section>
+
+</main>
+</div>
+<script>
+(function () {
+  function txt(el) { return el ? (el.textContent || '').replace(/\s+/g, ' ').trim() : ''; }
+  document.addEventListener('DOMContentLoaded', function () {
+    var main = document.querySelector('main'); if (!main) return;
+    var defs = {};
+    function secLabel(sec) {
+      if (!sec) return 'definition';
+      var n = sec.querySelector('h2 .num'), h = sec.querySelector('h2');
+      if (!n || !h) return 'definition';
+      return '§' + txt(n) + ' ' + txt(h).slice(txt(n).length).trim();
+    }
+    // 1. definition rows: first cell starts with an id
+    main.querySelectorAll('table').forEach(function (tb) {
+      var heads = Array.prototype.map.call(tb.querySelectorAll('tr:first-child th'), txt);
+      tb.querySelectorAll('tr').forEach(function (tr) {
+        var c = tr.querySelector('td'); if (!c) return;
+        var m = txt(c).match(/^(IP-\d+|S-\d+|I-\d+|FD-\d+|P-\d+|D\d{1,2}|E\d{1,2}|M\d)\b/); if (!m) return;
+        var id = m[1]; if (defs[id]) return;
+        tr.id = tr.id || 'ref-' + id;
+        var rows = Array.prototype.slice.call(tr.querySelectorAll('td'), 1).map(function (td, i) { return [heads[i + 1] || '', txt(td)]; });
+        defs[id] = { title: txt(c), rows: rows, target: tr.id, section: tr.closest('section') };
+        c.setAttribute('data-def', '1');
+      });
+    });
+    // 2. contract blocks are the richer definition for S-n
+    main.querySelectorAll('.contract').forEach(function (ct) {
+      var id = txt(ct.querySelector('.sid')); if (!/^S-\d+$/.test(id) || !ct.id) return;
+      var rows = [['Purpose', txt(ct.querySelector('.purpose'))]];
+      if (defs[id]) rows = rows.concat(defs[id].rows);
+      defs[id] = { title: id + ' · ' + txt(ct.querySelector('h4')).slice(id.length).trim(), rows: rows, target: ct.id, section: ct.closest('section') };
+    });
+    // 3. sections
+    main.querySelectorAll('section').forEach(function (s) {
+      var n = s.querySelector('h2 .num'); if (!n || !s.id) return;
+      var l = s.querySelector('.statement, .lede');
+      defs['§' + txt(n)] = { title: secLabel(s), rows: l ? [['', txt(l)]] : [], target: s.id, section: s };
+    });
+    // 4. wrap references in text
+    var re = /(§\d+|\b(?:IP-\d+|S-\d+|I-\d+|FD-\d+|P-\d+|D\d{1,2}|E\d{1,2}|M\d)\b)/g;
+    var walker = document.createTreeWalker(main, NodeFilter.SHOW_TEXT, { acceptNode: function (n) {
+      var p = n.parentElement; if (!p || p.closest('pre,svg,script,style,nav,h2,a,[data-def],.sid')) return NodeFilter.FILTER_REJECT;
+      re.lastIndex = 0; return re.test(n.nodeValue) ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT; } });
+    var nodes = []; while (walker.nextNode()) nodes.push(walker.currentNode);
+    nodes.forEach(function (n) {
+      var s = n.nodeValue, frag = document.createDocumentFragment(), last = 0, m; re.lastIndex = 0;
+      while ((m = re.exec(s))) {
+        var id = m[1], d = defs[id];
+        var before = s.slice(0, m.index).toLowerCase();
+        if (!d || (id[0] === '§' && /(proposal|current system|page|architecture)\s$/.test(before))) continue;
+        frag.appendChild(document.createTextNode(s.slice(last, m.index)));
+        var a = document.createElement('a'); a.className = 'ref'; a.href = '#' + d.target; a.textContent = id; a.setAttribute('data-ref', id);
+        a.setAttribute('aria-haspopup', 'dialog'); frag.appendChild(a); last = m.index + id.length;
+      }
+      if (!last) return; frag.appendChild(document.createTextNode(s.slice(last))); n.parentNode.replaceChild(frag, n);
+    });
+    // 5. popover card
+    var pop = document.createElement('div'); pop.className = 'refpop'; pop.setAttribute('role', 'dialog'); pop.hidden = true; document.body.appendChild(pop);
+    var cur = null;
+    function close() { pop.hidden = true; if (cur) cur.setAttribute('aria-expanded', 'false'); cur = null; }
+    function flash(id) {
+      var el = document.getElementById(id); if (!el) return;
+      el.classList.remove('flash'); void el.offsetWidth; el.classList.add('flash');
+      setTimeout(function () { el.classList.remove('flash'); }, 1900);
+    }
+    function open(a) {
+      var d = defs[a.getAttribute('data-ref')]; if (!d) return;
+      pop.innerHTML = '';
+      var h = document.createElement('div'); h.className = 'refpop-h'; h.textContent = d.title; pop.appendChild(h);
+      d.rows.forEach(function (r) {
+        if (!r[1]) return; var p = document.createElement('p');
+        if (r[0]) { var b = document.createElement('b'); b.textContent = r[0] + ': '; p.appendChild(b); }
+        p.appendChild(document.createTextNode(r[1].length > 340 ? r[1].slice(0, 337) + '…' : r[1])); pop.appendChild(p);
+      });
+      var go = document.createElement('a'); go.className = 'refpop-go'; go.href = '#' + d.target;
+      go.textContent = 'Go to ' + (d.section && d.section.id !== d.target ? secLabel(d.section) : 'section') + ' →';
+      go.addEventListener('click', function () { var t = d.target; close(); setTimeout(function () { flash(t); }, 350); });
+      pop.appendChild(go);
+      pop.hidden = false; cur = a; a.setAttribute('aria-expanded', 'true');
+      var r = a.getBoundingClientRect(), w = pop.offsetWidth;
+      var left = Math.max(window.scrollX + 12, Math.min(r.left + window.scrollX, window.scrollX + document.documentElement.clientWidth - w - 12));
+      pop.style.left = left + 'px'; pop.style.top = (r.bottom + window.scrollY + 6) + 'px';
+      go.focus({ preventScroll: true });
+    }
+    document.addEventListener('click', function (e) {
+      var a = e.target.closest && e.target.closest('a.ref');
+      if (a) { e.preventDefault(); if (cur === a) close(); else open(a); return; }
+      if (!pop.hidden && !pop.contains(e.target)) close();
+    });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !pop.hidden) { var a = cur; close(); if (a) a.focus(); } });
+    window.addEventListener('resize', close);
+  });
+})();
+</script>
+</body>
+</html>
