@@ -1,5 +1,37 @@
 # Visual rules and audit
 
+## Which drawing
+
+A drawing earns its place when the reader can say what happens after looking at it. A
+drawing that is only tidy boxes fails that test, however good it looks. Start from the
+question the page answers and pick the kind of drawing that answers it:
+
+| The reader asks | Draw | It must show |
+|---|---|---|
+| What runs where, and what may cross? | **System design** drawing: processes as boxes inside typed boundary frames | Each box: name, `[kind · technology]`, one line of responsibility. Each arrow: a number, what crosses, and the contract id. One arrow per boundary crossing. |
+| What happens, in what order? | **Sequence** drawing: one lifeline per part, grouped in frames by process | Numbered messages named as the real request, reply or event; a bar where a part is busy; a note for the main failure. The same steps as a numbered list under the drawing. |
+| Who does what? | **Swimlane**: one lane per actor (person, agent, tool, proof) | Numbered steps in lanes; the loop that repeats without a person; the hand-offs. |
+| How does this behave over time? | **Timing** drawing: time left to right, input rows above, output row last | Held spans as bars, marked moments as vertical lines with a label. For analog input, the value as a curve with its threshold lines. One drawing per rule. |
+| What does the screen look like? | **Wireframe**: structure only, no styling | Each region labelled with who decides it (shell, layout data, a feature). |
+| What do I write, and what uses it? | **Two-row map**: the running system on top, the author's files under the part that uses each | A verb on every vertical arrow (drawn from, checked against, calls). |
+| How do the layers stack? | **Layer stack**: one full-width row per layer | Columns for what it holds and who writes it. |
+| What is in this folder? | The **tree component**, not a drawing | Names, and a note per entry. |
+
+Rules that apply to all of them:
+
+- **Number the arrows** and repeat the numbers in the text. Readers follow numbers; they do
+  not follow colour.
+- **Do not let line style carry meaning** where arrows are animated (the docs site animates
+  them as moving dashes): solid against dashed is then invisible. Use numbers, direction and
+  labels.
+- **A drawing and its list agree.** When a sequence is drawn and also listed, they have the
+  same steps in the same order. Other drawings of the same flow elsewhere in the docs agree
+  too: three drawings of one click that differ on when a value is stored is a defect.
+- **The caption says how to read it** ("Read the numbers in order", "Time runs left to
+  right") and states the one thing to take away.
+- Look at every new drawing rendered before calling it done. Labels collide in ways the
+  markup does not show.
+
 ## Diagrams
 
 - **One figure, one claim.** Small, discussable diagrams; split anything over ~12 boxes.
@@ -25,6 +57,13 @@
   floating card positioned in the viewport (never inside the figure, never causing a
   scrollbar), and no card for boxes with no arrows. No native `title` tooltips on top.
 - Scenario players: step controls, the moving pill must never cover a label.
+- A player is compact: a scrubber in the control bar, then one line per step (number, name,
+  route, proof status) that jumps to the step, then the detail of the current step only.
+  The step list sits above the detail panel so it does not move as the detail changes
+  length. The full text of every step stays in the Markdown copy.
+- Inner pages open with a breadcrumb: group, sidebar heading, page, item.
+- Two dividers never stack: a block that draws its own top line does not also get a
+  heading with a top line.
 
 ## Audit (run in a real browser on every page and every player step)
 

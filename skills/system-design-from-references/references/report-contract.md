@@ -16,7 +16,7 @@ Ids vary a little between reports (`wire` or `sdk`, `render` or `ui`, `extend` /
 |---|---|
 | Overview (`overview`) | Every process and link with its transport; the shape to compare in Phase 2. |
 | Processes (`processes`) | Roles, lifetime, launch and supervision per OS, startup order: input to the processes and resilience decisions. |
-| Communication (`wire`, `sdk`) | Endpoints, handshake, framing, message kinds, flow control, reconnect: input to the seams (S-#). Wire formats needed for compatibility are restated as specifications. |
+| Communication (`wire`, `sdk`) | Endpoints, handshake, framing, message kinds, flow control, reconnect: input to the contracts (C-#). Wire formats needed for compatibility are restated as specifications. |
 | Core data pipeline (`pipeline`) | How the main payload flows, both directions: input to the core components and scenarios. |
 | UI or rendering (`render`, `ui`) | View tree, state → pixels, redraw scheduling, themes. |
 | Extension points (`extend`, `mods`, `plugins`) | How one thing is added, lifecycle, permissions: input to the "Adding a <thing>" section. |
@@ -63,7 +63,7 @@ every uncertain item, and the licence in the subtitle.
 ```
 Q12 · openrgb · Communication
 Missing   How a client learns that a controller was removed mid-session.
-Blocks    D9 (device removal semantics), S-3 versioning rule.
+Blocks    D9 (device removal semantics), C-3 versioning rule.
 Meanwhile Design assumes an explicit removal event; risk R7 tracks it.
 ```
 

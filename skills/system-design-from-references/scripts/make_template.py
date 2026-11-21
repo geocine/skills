@@ -101,7 +101,7 @@ def box(cls, x, y, w, h, title, sub=None, nid=None, detail=None):
 
 
 fig = (
-    '<svg viewBox="0 0 900 240" role="img" aria-label="__CLAIM: the settings UI sends a request over S-1 to the router inside the daemon process; the router hands it to the keyboard actor, which writes a report to the device and persists the applied value to the store.__">\n'
+    '<svg viewBox="0 0 900 240" role="img" aria-label="__CLAIM: the settings UI sends a request over C-1 to the router inside the daemon process; the router hands it to the keyboard actor, which writes a report to the device and persists the applied value to the store.__">\n'
     '<g class="bd b-process"><rect x="200" y="20" width="470" height="200" rx="10"/><text x="216" y="42">daemon · one process</text></g>\n'
     + box('ui', 20, 70, 150, 56, 'Settings UI', 'client · view only', 'ui', 'Shows state; never touches a device.') + '\n'
     + box('mw', 220, 70, 200, 56, 'Router', 'feature → device', 'router', 'Stateless; resolves the target actor.') + '\n'
@@ -110,7 +110,7 @@ fig = (
     + box('native', 720, 70, 160, 56, 'Device', 'USB HID', 'dev') + '\n'
     + '<path class="ar" data-e="ui router" d="M170 98 H218" marker-end="url(#ah)"/><path class="ar" data-e="router kb" d="M420 98 H448" marker-end="url(#ah)"/>'
     + '<path class="ar" data-e="kb dev" d="M650 98 H718" marker-end="url(#ah)"/><path class="ar d" data-e="kb store" d="M550 126 V148" marker-end="url(#ah)"/>\n'
-    + '<text class="lbl" data-e="ui router" x="194" y="88" text-anchor="middle">S-1</text><text class="lbl" data-e="kb dev" x="684" y="88" text-anchor="middle">report</text>'
+    + '<text class="lbl" data-e="ui router" x="194" y="88" text-anchor="middle">C-1</text><text class="lbl" data-e="kb dev" x="684" y="88" text-anchor="middle">report</text>'
     + '<text class="lbl" data-e="kb store" x="560" y="141">persist</text>\n'
     + '</svg>'
 )
@@ -149,7 +149,7 @@ body = '''<body>
     div.kpis > div.kpi · div.contract (with span.sid, ol.steps, p.purpose) · div.flow > div.step
     pre > code with span.k (keyword) .t (type) .s (string) .c (comment) .f (function)
     div.bytes (wire layout) · p.note · table.dense.glossary
-  Ids D#, S-#, I-#, E#, M# in the first cell of a table row become link targets; mentions of them
+  Ids D#, C-#, I-#, E#, M# in the first cell of a table row become link targets; mentions of them
   anywhere in the text are linked with a popover card by the script at the end.
 -->
 
@@ -216,17 +216,17 @@ body = '''<body>
 <!-- 3 -->
 <section id="interfaces">
 <h2><span class="num">3</span>Interfaces</h2>
-<p class="lede">__Every seam between components, its contract, and how it versions.__</p>
+<p class="lede">__Every contract between components, what crosses it, and how it versions.__</p>
 <div class="contract" id="s1">
-<h4><span class="sid">S-1</span>__UI ↔ daemon__</h4>
-<p class="purpose"><b>Purpose:</b> __what crosses this seam and why it exists.__</p>
+<h4><span class="sid">C-1</span>__UI ↔ daemon__</h4>
+<p class="purpose"><b>Purpose:</b> __what crosses this contract and why it exists.__</p>
 <pre><code><span class="k">pub enum</span> <span class="t">Request</span> {
     <span class="t">SetSetting</span> { device: <span class="t">DeviceId</span>, key: <span class="t">Key</span>, value: <span class="t">Value</span> },   <span class="c">// replaces any older value for the same key</span>
 }</code></pre>
 </div>
 <div class="tablewrap"><table class="dense">
-<tr><th>#</th><th>Seam</th><th>Encoding</th><th>Versioning</th></tr>
-<tr><td>S-1</td><td>__UI ↔ daemon__</td><td>__length-prefixed protobuf__</td><td>__additive only; N and N-1 both served__</td></tr>
+<tr><th>#</th><th>Contract</th><th>Encoding</th><th>Versioning</th></tr>
+<tr><td>C-1</td><td>__UI ↔ daemon__</td><td>__length-prefixed protobuf__</td><td>__additive only; N and N-1 both served__</td></tr>
 </table></div>
 <div class="tablewrap"><table class="dense">
 <tr><th>#</th><th>Invariant</th><th>Proved by</th></tr>
@@ -239,9 +239,9 @@ body = '''<body>
 <h2><span class="num">4</span>Walkthroughs</h2>
 <p class="lede">__The running example, traced hop by hop.__</p>
 <div class="contract" id="w1">
-<h4><span class="sid">W1</span>__The user changes one setting on the example product__</h4>
+<h4>__The user changes one setting on the example product__</h4>
 <ol class="steps">
-<li>__The UI sends a request over S-1.__</li>
+<li>__The UI sends a request over C-1.__</li>
 <li>__The router resolves the device and hands the request to its actor (D1).__</li>
 <li>__The actor writes the report; the store records the applied value (I-1).__</li>
 </ol>
@@ -267,7 +267,7 @@ body = '''<body>
 </table></div>
 <div class="tablewrap"><table class="dense">
 <tr><th>#</th><th>Epic</th><th>Lane</th><th>Depends on</th><th>Done when</th></tr>
-<tr><td>E1</td><td>__Core runtime__</td><td>__A__</td><td>__–__</td><td>__W1 runs green in the simulator__</td></tr>
+<tr><td>E1</td><td>__Core runtime__</td><td>__A__</td><td>__–__</td><td>__The setting-change scenario runs green in the simulator__</td></tr>
 </table></div>
 </section>
 

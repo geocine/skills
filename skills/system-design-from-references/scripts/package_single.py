@@ -209,7 +209,7 @@ index = f'''# {name} design docs
 
 How to read it:
 - Two source documents: the architecture proposal (why and what) and the build plan (how and when). Where they disagree, the plan's decisions win.
-- Stable ids link everything: D# decisions, S-# seams/interfaces, I-# invariants, E# epics, M# milestones. Each is defined in the build plan.
+- Stable ids link everything: D# decisions, C-# contracts, I-# invariants, E# epics, M# milestones. Each is defined in the build plan.
 - Every file below is Markdown generated from the same HTML a reader opens, so it is always current.
 
 ## Documents

@@ -179,6 +179,26 @@ svg .n.s4 rect{fill:var(--code);stroke:var(--line2)}
 .contrast table{background:transparent}
 .contrast th{font-size:12px}
 .contrast td:first-child{color:var(--mute)}
+
+/* directory tree: a nested list with folder and file icons and a notes column */
+.tree{margin:12px 0 16px;padding:12px 16px;background:var(--code);border-radius:8px;overflow-x:auto;--ind:0em}
+.tree,.tree ul{list-style:none}
+.tree ul{margin:0 0 0 7px;padding:0 0 0 15px;border-left:1px solid var(--line2);--ind:1.4em}
+.tree ul ul{--ind:2.8em}
+.tree li{margin:0;padding:0}
+.tree .tr{display:grid;grid-template-columns:calc(19em - var(--ind)) minmax(12em,1fr);column-gap:18px;align-items:baseline;padding:3px 0;min-width:30em}
+.tree .tr.wide{grid-template-columns:1fr}
+.tree .tns{display:flex;flex-wrap:wrap;gap:4px 12px;align-items:baseline}
+.tree code.tn{background:none;padding:0;font:500 13px/1.5 var(--mono);color:var(--fg);white-space:nowrap}
+.tree code.tn::before{content:"";display:inline-block;width:13px;height:11px;margin-right:7px;vertical-align:-1px;background:var(--mute);
+  -webkit-mask:var(--ico) center/contain no-repeat;mask:var(--ico) center/contain no-repeat;
+  --ico:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 13 11'%3E%3Cpath d='M2.5.5h5l3 3v7h-8z' fill='none' stroke='%23000'/%3E%3C/svg%3E")}
+.tree .dir>.tr code.tn:first-child,.tree code.tn.d{font-weight:600}
+.tree .dir>.tr code.tn:first-child::before,.tree code.tn.d::before{background:var(--acc);
+  --ico:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 13 11'%3E%3Cpath d='M.5 1.5h4l1.2 1.5h6.8v7.5h-12z'/%3E%3C/svg%3E")}
+.tree .td{font:13px/1.5 var(--sans);color:var(--mute)}
+.tree .td code{font-size:12px}
+@media (max-width:720px){.tree .tr{grid-template-columns:1fr;min-width:0}.tree .td{padding-left:20px}}
 </style>
 <script>
 (function(){
@@ -318,7 +338,7 @@ document.addEventListener("DOMContentLoaded",function(){
     div.kpis > div.kpi · div.contract (with span.sid, ol.steps, p.purpose) · div.flow > div.step
     pre > code with span.k (keyword) .t (type) .s (string) .c (comment) .f (function)
     div.bytes (wire layout) · p.note · table.dense.glossary
-  Ids D#, S-#, I-#, E#, M# in the first cell of a table row become link targets; mentions of them
+  Ids D#, C-#, I-#, E#, M# in the first cell of a table row become link targets; mentions of them
   anywhere in the text are linked with a popover card by the script at the end.
 -->
 
@@ -356,7 +376,7 @@ document.addEventListener("DOMContentLoaded",function(){
 <h2><span class="num">1</span>System</h2>
 <p class="statement">__One paragraph that states the design as fact.__</p>
 <figure>
-<svg viewBox="0 0 900 240" role="img" aria-label="__CLAIM: the settings UI sends a request over S-1 to the router inside the daemon process; the router hands it to the keyboard actor, which writes a report to the device and persists the applied value to the store.__">
+<svg viewBox="0 0 900 240" role="img" aria-label="__CLAIM: the settings UI sends a request over C-1 to the router inside the daemon process; the router hands it to the keyboard actor, which writes a report to the device and persists the applied value to the store.__">
 <g class="bd b-process"><rect x="200" y="20" width="470" height="200" rx="10"/><text x="216" y="42">daemon · one process</text></g>
 <g class="n ui" data-n="ui" data-d="Shows state; never touches a device." transform="translate(20,70)"><rect width="150" height="56" rx="6"/><text class="tt" x="12" y="22">Settings UI</text><text class="ts" x="12" y="40">client · view only</text></g>
 <g class="n mw" data-n="router" data-d="Stateless; resolves the target actor." transform="translate(220,70)"><rect width="200" height="56" rx="6"/><text class="tt" x="12" y="22">Router</text><text class="ts" x="12" y="40">feature → device</text></g>
@@ -364,7 +384,7 @@ document.addEventListener("DOMContentLoaded",function(){
 <g class="n store" data-n="store" transform="translate(450,150)"><rect width="200" height="50" rx="6"/><text class="tt" x="12" y="22">Store</text><text class="ts" x="12" y="40">intent + applied</text></g>
 <g class="n native" data-n="dev" transform="translate(720,70)"><rect width="160" height="56" rx="6"/><text class="tt" x="12" y="22">Device</text><text class="ts" x="12" y="40">USB HID</text></g>
 <path class="ar" data-e="ui router" d="M170 98 H218" marker-end="url(#ah)"/><path class="ar" data-e="router kb" d="M420 98 H448" marker-end="url(#ah)"/><path class="ar" data-e="kb dev" d="M650 98 H718" marker-end="url(#ah)"/><path class="ar d" data-e="kb store" d="M550 126 V148" marker-end="url(#ah)"/>
-<text class="lbl" data-e="ui router" x="194" y="88" text-anchor="middle">S-1</text><text class="lbl" data-e="kb dev" x="684" y="88" text-anchor="middle">report</text><text class="lbl" data-e="kb store" x="560" y="141">persist</text>
+<text class="lbl" data-e="ui router" x="194" y="88" text-anchor="middle">C-1</text><text class="lbl" data-e="kb dev" x="684" y="88" text-anchor="middle">report</text><text class="lbl" data-e="kb store" x="560" y="141">persist</text>
 </svg>
 <figcaption>__What the picture proves, in one or two sentences, citing ids (D1, I-1).__</figcaption>
 </figure>
@@ -394,17 +414,17 @@ document.addEventListener("DOMContentLoaded",function(){
 <!-- 3 -->
 <section id="interfaces">
 <h2><span class="num">3</span>Interfaces</h2>
-<p class="lede">__Every seam between components, its contract, and how it versions.__</p>
+<p class="lede">__Every contract between components, what crosses it, and how it versions.__</p>
 <div class="contract" id="s1">
-<h4><span class="sid">S-1</span>__UI ↔ daemon__</h4>
-<p class="purpose"><b>Purpose:</b> __what crosses this seam and why it exists.__</p>
+<h4><span class="sid">C-1</span>__UI ↔ daemon__</h4>
+<p class="purpose"><b>Purpose:</b> __what crosses this contract and why it exists.__</p>
 <pre><code><span class="k">pub enum</span> <span class="t">Request</span> {
     <span class="t">SetSetting</span> { device: <span class="t">DeviceId</span>, key: <span class="t">Key</span>, value: <span class="t">Value</span> },   <span class="c">// replaces any older value for the same key</span>
 }</code></pre>
 </div>
 <div class="tablewrap"><table class="dense">
-<tr><th>#</th><th>Seam</th><th>Encoding</th><th>Versioning</th></tr>
-<tr><td>S-1</td><td>__UI ↔ daemon__</td><td>__length-prefixed protobuf__</td><td>__additive only; N and N-1 both served__</td></tr>
+<tr><th>#</th><th>Contract</th><th>Encoding</th><th>Versioning</th></tr>
+<tr><td>C-1</td><td>__UI ↔ daemon__</td><td>__length-prefixed protobuf__</td><td>__additive only; N and N-1 both served__</td></tr>
 </table></div>
 <div class="tablewrap"><table class="dense">
 <tr><th>#</th><th>Invariant</th><th>Proved by</th></tr>
@@ -417,9 +437,9 @@ document.addEventListener("DOMContentLoaded",function(){
 <h2><span class="num">4</span>Walkthroughs</h2>
 <p class="lede">__The running example, traced hop by hop.__</p>
 <div class="contract" id="w1">
-<h4><span class="sid">W1</span>__The user changes one setting on the example product__</h4>
+<h4>__The user changes one setting on the example product__</h4>
 <ol class="steps">
-<li>__The UI sends a request over S-1.__</li>
+<li>__The UI sends a request over C-1.__</li>
 <li>__The router resolves the device and hands the request to its actor (D1).__</li>
 <li>__The actor writes the report; the store records the applied value (I-1).__</li>
 </ol>
@@ -445,7 +465,7 @@ document.addEventListener("DOMContentLoaded",function(){
 </table></div>
 <div class="tablewrap"><table class="dense">
 <tr><th>#</th><th>Epic</th><th>Lane</th><th>Depends on</th><th>Done when</th></tr>
-<tr><td>E1</td><td>__Core runtime__</td><td>__A__</td><td>__–__</td><td>__W1 runs green in the simulator__</td></tr>
+<tr><td>E1</td><td>__Core runtime__</td><td>__A__</td><td>__–__</td><td>__The setting-change scenario runs green in the simulator__</td></tr>
 </table></div>
 </section>
 
@@ -487,7 +507,7 @@ document.addEventListener("DOMContentLoaded",function(){
       var heads = Array.prototype.map.call(tb.querySelectorAll('tr:first-child th'), txt);
       tb.querySelectorAll('tr').forEach(function (tr) {
         var c = tr.querySelector('td'); if (!c) return;
-        var m = txt(c).match(/^(IP-\d+|S-\d+|I-\d+|FD-\d+|P-\d+|D\d{1,2}|E\d{1,2}|M\d)\b/); if (!m) return;
+        var m = txt(c).match(/^(IP-\d+|FP-\d+|C-\d+|I-\d+|FD-\d+|P-\d+|D\d{1,2}|E\d{1,2}|M\d)\b/); if (!m) return;
         var id = m[1]; if (defs[id]) return;
         tr.id = tr.id || 'ref-' + id;
         var rows = Array.prototype.slice.call(tr.querySelectorAll('td'), 1).map(function (td, i) { return [heads[i + 1] || '', txt(td)]; });
@@ -509,7 +529,7 @@ document.addEventListener("DOMContentLoaded",function(){
       defs['§' + txt(n)] = { title: secLabel(s), rows: l ? [['', txt(l)]] : [], target: s.id, section: s };
     });
     // 4. wrap references in text
-    var re = /(§\d+|\b(?:IP-\d+|S-\d+|I-\d+|FD-\d+|P-\d+|D\d{1,2}|E\d{1,2}|M\d)\b)/g;
+    var re = /(§\d+|\b(?:IP-\d+|FP-\d+|C-\d+|I-\d+|FD-\d+|P-\d+|D\d{1,2}|E\d{1,2}|M\d)\b)/g;
     var walker = document.createTreeWalker(main, NodeFilter.SHOW_TEXT, { acceptNode: function (n) {
       var p = n.parentElement; if (!p || p.closest('pre,svg,script,style,nav,h2,a,[data-def],.sid')) return NodeFilter.FILTER_REJECT;
       re.lastIndex = 0; return re.test(n.nodeValue) ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT; } });

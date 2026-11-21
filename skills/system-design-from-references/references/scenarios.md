@@ -27,9 +27,9 @@ Schema: `../assets/scenarios.schema.json`.
   "groups": [{ "label": "daemon process", "nodes": ["rt", "act", "db"], "style": "process" }],
   "steps": [
     { "from": "ui", "to": "rt", "label": "set dpi 1600",
-      "text": "The UI sends a typed request over S-1.",
+      "text": "The UI sends a typed request over C-1.",
       "expect": "router receives SetSetting{key:dpi,value:1600} within 5 ms",
-      "proof": { "kind": "contract", "ref": "S-1" } },
+      "proof": { "kind": "contract", "ref": "C-1" } },
     { "from": "act", "to": "io", "label": "write report",
       "text": "The actor encodes the report; the transport writes it (I-3: one writer).",
       "expect": "exactly one transport write for the device",
@@ -41,7 +41,7 @@ Schema: `../assets/scenarios.schema.json`.
 Fields: `kind` is the visual colour class (ui, mw, svc, store, native, warnb); `component`
 is the identity (which core component type the box is an instance of); `groups` are typed
 boundaries; `proof.kind` is one of contract, sim, invariant, bench, chaos, hil, review;
-narration ids (D7, S-1, I-3, E12, M2) and `[[section-id]]` become links.
+narration ids (D7, C-1, I-3, E12, M2) and `[[section-id]]` become links.
 
 ## Build-time checks (fail the build)
 
@@ -54,7 +54,7 @@ narration ids (D7, S-1, I-3, E12, M2) and `[[section-id]]` become links.
 ## Coverage
 
 Bootstrap · discovery/detection · the running example end to end · one failure per critical
-seam (timeout, crash, disconnect) · migration/cutover · any flow with ordering subtleties
+contract (timeout, crash, disconnect) · migration/cutover · any flow with ordering subtleties
 (sync, experiments, updates).
 
 ## Docs site
@@ -67,7 +67,11 @@ With `single`, the same scenarios render as static walkthroughs in the build pla
   content is never retyped; pages interleave sections from both documents by topic, each
   section on exactly one page.
 - Scenario players are embedded where the reader already is (replacing or following a
-  figure), not on a separate page.
+  figure), not on a separate page, and on the page that teaches the subject rather than a
+  reference page. The running example plays on the Developer guide.
+- A scenario's title is a plain sentence; it carries no label such as W1.
+- The player is compact: a scrubber, one line per step, and the detail of the current step
+  only (`visual-rules.md`, "Interactions").
 - Figures get hover cards and flow highlighting from the arrows already in the SVG.
 - Publish both standalone documents and the reference pages under `docs/` so "open in the
   document" and prior-art links work; vendor copies of reference pages that live outside the

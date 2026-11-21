@@ -1,6 +1,6 @@
 ---
 name: system-design-from-references
-description: Clean-room system design. Takes architecture reports of several reference systems (produced beforehand by the architecture-report skill, the *-architecture.html pages) as the only input, compares them, and writes an assertive architecture proposal and a build plan with stable ids (decisions, seams, invariants, epics, milestones), plus scenarios that double as executable specs. The user chooses the output: single self-contained HTML files in the Synapse Next docs layout (sidebar document switcher, section TOC, legend, hover cards), or a React docs site built from the Synapse Next site (topic pages, animated scenario players, search). Use this whenever the user has architecture reports or reference pages and wants a design from them — "design the rewrite from these reports", "compare these architectures and propose ours", "master plan", "architecture proposal", "design doc from prior art", "clean room design" — even if they never say "reference". It never reads the reference systems' code or artifacts itself.
+description: Clean-room system design. Takes architecture reports of several reference systems (produced beforehand by the architecture-report skill, the *-architecture.html pages) as the only input, compares them, and writes an assertive architecture proposal and a build plan with stable ids, written in a plain, short-named style a new developer can start from, (decisions, contracts, invariants, epics, milestones), plus scenarios that double as executable specs. The user chooses the output: single self-contained HTML files in the Synapse Next docs layout (sidebar document switcher, section TOC, legend, hover cards), or a React docs site built from the Synapse Next site (topic pages, animated scenario players, search). Use this whenever the user has architecture reports or reference pages and wants a design from them — "design the rewrite from these reports", "compare these architectures and propose ours", "master plan", "architecture proposal", "design doc from prior art", "clean room design" — even if they never say "reference". It never reads the reference systems' code or artifacts itself.
 argument-hint: "[report paths or folder] [react (default) | single] [target system, optional]"
 ---
 
@@ -21,6 +21,11 @@ written down. This skill does the **design side** of a clean-room process:
 ```
 
 Each phase produces a durable file, so work can stop and resume at any phase.
+
+**Before writing any page, read `references/writing-style.md`.** It holds the rules readers of
+the Synapse Next docs asked for: short names with the explanation under them, a claim first,
+one word per concept, drawings that explain rather than decorate, and the pages a new
+developer starts from.
 
 The report side is the **architecture-report** skill (`.claude/skills/architecture-report/`,
 beside this one). It reads the reference repos directly: the open-source projects (cloned
@@ -70,6 +75,10 @@ Write `design/00-frame.md` with:
 - **Reports**: the list of architecture reports and the concern each is expected to teach.
 - **Concerns** the design must answer: processes and privilege, IPC, state, extension
   model, UI rendering, update and delivery, observability, testing, migration.
+
+- **Words**: the one word the docs use for each recurring thing (contract, pattern, daemon,
+  codec…), its one-line meaning and its id prefix if it has one. Filled in during Phase 3 and
+  kept current; every page uses these words and no others for those things.
 
 - **Output**: `react` (default) or `single` (see below).
 
@@ -126,15 +135,27 @@ it) and stays open until a report covers it.
 Explains the system to someone who will build or review it. Section skeleton in
 `references/design-docs.md` ("Architecture proposal"). Rules:
 
+- **Short names, claim first.** A page or section title is two to four words and carries no
+  id. Its first line is a claim, then "Read this page to…" (who it is for, what it covers, what
+  it leaves out). Every page ends with "What to read next" (`references/writing-style.md`).
 - **Assertive**. State what is built and why: "The daemon owns every device handle", not
   "we could consider". No Keep/Change/Defer tags, no "to be confirmed". Open questions
   live in the Risks section with an owner and a date.
-- **Every section opens with a diagram** that shows the mechanism (who talks to whom, what
-  crosses which boundary, which state moves), then prose. Small, discussable diagrams beat
-  one monster diagram. Follow `references/visual-rules.md`.
+- **Every section has the drawing that answers its question**, right after its opening lines.
+  Choose the kind from `references/visual-rules.md`, "Which drawing": a system design drawing for
+  what runs where, a sequence for what happens in order, a swimlane for who does what, a timing
+  drawing for behaviour over time, a wireframe for a screen. Number the arrows and repeat the
+  numbers in the text. A drawing the reader cannot explain back has failed, however tidy it is.
+  Small, discussable drawings beat one monster drawing.
 - **Component identity**: say which boxes are *types* (the actor, the transport) and which
   are *instances* (the keyboard actor, the USB transport).
-- **One running example** (one product, one user action) reused across sections.
+- **One running example** (one product, one user action) reused across sections. Every code
+  sample for it agrees with every other: the same keys, types and order of effects.
+- **One word per concept**, defined where first used and in the glossary. Pick each word in
+  Phase 3 and record it in `design/00-frame.md` under **Words**, with its id prefix.
+- **The three starting pages** are part of the proposal: the Developer guide, "Adding a
+  <thing>" as a full walkthrough, and how the work gets done with the person's part drawn
+  (`references/design-docs.md`, "Pages every design has").
 - **Before / after** for a rewrite, drawn from the current system's report.
 
 ## Phase 4 · Plan (the build document)
@@ -145,11 +166,13 @@ backbone is **stable ids** every other artifact links to:
 | Prefix | What | Example |
 |---|---|---|
 | D# | Decision, with basis (one or more report sections) | D7 One actor per device |
-| S-# | Seam/interface between components: contract, encoding, versioning rule | S-2 daemon ↔ UI |
+| C-# | Contract between components: what crosses, encoding, versioning rule | C-2 daemon ↔ UI |
 | I-# | Invariant, with the test or check that proves it | I-3 one writer per device |
 | E# | Epic: owner, lane, dependencies, definition of done | E12 Keyboard family |
 | M# | Milestone/gate: week range, observable exit criteria | M2 First device end to end |
 
+A prefix always matches the word the docs use for the thing (a contract is `C-`, not `S-` for
+"seam"); if a design adds a kind of id, name the thing first and derive the prefix from the name.
 Ids are never renumbered once published (append instead). The proposal and the plan must
 agree; when they disagree, the plan's decision wins until a decision record changes it.
 Include a critical path, a risk register (risk, signal, mitigation, owner — open questions
@@ -164,22 +187,29 @@ a test runner later executes each `expect`. See `references/scenarios.md` and
 `assets/scenarios.schema.json`.
 
 Cover at minimum: bootstrap, the running example end to end, one failure path per critical
-seam, every *preserve* quirk from intake, and the migration/cutover path.
+contract, every *preserve* quirk from intake, and the migration/cutover path.
+
+A scenario is known by its title ("The user changes one setting"). Do not give scenarios labels
+such as W1; text that refers to one uses its name, as a link.
 
 How readers see the scenarios depends on the output:
 - **single**: each scenario becomes a static walkthrough in the plan's Walkthroughs section:
-  a `.contract` block (`W#`, steps as `ol.steps`, each step's `expect` and proof kind) plus
+  a `.contract` block (the scenario's title, steps as `ol.steps`, each step's `expect` and proof kind) plus
   one figure built from the scenario's grid (same boxes, numbered arrows in step order).
   Write it from `scenarios.json` so the two never disagree.
 - **react**: the site animates each scenario in a FlowPlayer embedded in place (see
-  `references/scenarios.md`, "Docs site"); the plan keeps a short `W#` summary that links to
-  the player.
+  `references/scenarios.md`, "Docs site"), on the page that teaches its subject: the running
+  example on the Developer guide, a failure on the page of the part that fails. The plan keeps a
+  short summary that links to the player.
 
 ## Phase 6 · Audit (every time anything changes)
 
 - Visuals: run the audit in `references/visual-rules.md` in a real browser on every page
   and every scenario step.
-- Consistency: every D/S/I/E/M id cited resolves to a row in the plan; proposal and plan
+- Writing: run the checks at the end of `references/writing-style.md` on every page (claims,
+  heading length, undefined terms, one word per concept, long cells, references by position,
+  samples that disagree) and fix what fails.
+- Consistency: every D/C/I/E/M id cited resolves to a row in the plan; proposal and plan
   agree on each shared topic; every acronym is in the glossary; every link resolves.
 - Provenance: every decision cites at least one report section, and every mechanism in the
   proposal traces to a decision; nothing in the docs reproduces reference code, identifiers or
@@ -203,7 +233,7 @@ Paths starting with `synapse-next-docs/` are relative to `herdr-architecture/`; 
 
 - **Start each document from `assets/doc-template.html`.** It carries the Synapse documents'
   own CSS (light/dark tokens, Inter and JetBrains Mono), the Dark/Light/System toggle, the
-  arrow markers, the diagram classes, and the script that turns D/S/I/E/M ids into links with
+  arrow markers, the diagram classes, and the script that turns D/C/I/E/M ids into links with
   popover cards. The comment at its top lists the diagram and content vocabulary. Replace the
   `__PLACEHOLDERS__`, drop sections that do not apply, and add sections in the same patterns.
 - **Layout: the Synapse Next docs site, in one HTML file.** The template wraps the page in
@@ -255,7 +285,7 @@ not finished until it exists:
 
 | File | Contents |
 |---|---|
-| `llms.txt` | index: what the design is, how to read it (D/S/I/E/M ids), one link per Markdown file |
+| `llms.txt` | index: what the design is, how to read it (D/C/I/E/M ids), one link per Markdown file |
 | `llms-full.txt` | the index plus every Markdown file in one file |
 | `md/architecture.md`, `md/master-plan.md` | each document as Markdown, sections in document order, tables and code kept, figures as their claim (aria-label + caption) |
 | `md/scenarios.md` | every scenario: components, boundaries, steps with expect and proof |

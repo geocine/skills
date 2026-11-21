@@ -192,7 +192,7 @@
               },
               "text": {
                 "type": "string",
-                "description": "Narration. Ids such as D3, S-2, I-3 and [[section-id]] become links."
+                "description": "Narration. Ids such as D3, C-2, I-3 and [[section-id]] become links."
               },
               "expect": {
                 "type": "string",
