@@ -20,6 +20,7 @@ npx -y @geocine/skills skill-judge --project
 | --- | --- |
 | `architecture-report` | Document a codebase's architecture, or a scoped part of it, as one self-contained HTML report with diagrams and a glossary. |
 | `branch-backup-split-commits` | Back up a dirty Git worktree to a safety branch, split the changes into conventional commits, and verify tree-hash alignment. |
+| `cargo-fork-optimize` | Move a Rust project onto the huacnlee/cargo fork for shared deps, small target dirs and less disk use. |
 | `claude-history-traversal` | Traverse Claude Code session JSONL history and export folder-scoped timeline JSON. |
 | `codex-history-traversal` | Traverse Codex rollout JSONL history and replay `apply_patch` operations chronologically. |
 | `contributing-guide` | Generate a CONTRIBUTING.md and README section enforcing an issue-first workflow with AI disclosure. |
