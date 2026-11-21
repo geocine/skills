@@ -18,13 +18,12 @@ npx -y @geocine/skills skill-judge --project
 
 | Skill | Description |
 | --- | --- |
-| `adhd-friendly-tech-writing` | Write and rewrite technical content in a concise, conversational, ADHD-friendly style. |
 | `architecture-report` | Document a codebase's architecture, or a scoped part of it, as one self-contained HTML report with diagrams and a glossary. |
 | `branch-backup-split-commits` | Back up a dirty Git worktree to a safety branch, split the changes into conventional commits, and verify tree-hash alignment. |
 | `claude-history-traversal` | Traverse Claude Code session JSONL history and export folder-scoped timeline JSON. |
 | `codex-history-traversal` | Traverse Codex rollout JSONL history and replay `apply_patch` operations chronologically. |
 | `contributing-guide` | Generate a CONTRIBUTING.md and README section enforcing an issue-first workflow with AI disclosure. |
-| `council` | Have Claude, Codex, and Grok independently review a design, decision, or change, then reconcile their verdicts. |
+| `council` | Have Claude, Codex, Grok, and Gemini (through Cursor) independently review a design, decision, or change, then reconcile their verdicts. |
 | `cursor-history-traversal` | Traverse Cursor chat history from local SQLite databases and export folder-scoped timeline JSON. |
 | `decision-models` | Explain and apply decision models: TypeSafe System One (Jev), classifiers, encoders, and constrained decoding. |
 | `grok-history-traversal` | Traverse Grok CLI session JSONL history and export folder-scoped timeline JSON. |
@@ -33,6 +32,7 @@ npx -y @geocine/skills skill-judge --project
 | `pi-history-traversal` | Traverse Pi coding-agent session JSONL history, inspect branches and tool results, and export folder-scoped timeline JSON. |
 | `skill-judge` | Test, score, and improve an agent skill before publishing, using subagent runs and a rubric-based judge. |
 | `system-design-from-references` | Compare architecture reports of reference systems and write a clean-room architecture proposal and build plan. |
+| `technical-writing` | Write, rewrite and review explainers and reference docs so a busy reader can follow and act on them. |
 | `windows-minidump-analyzer` | Analyze Windows crash dumps (.dmp) and generate markdown reports via cdb.exe or header parsing. |
 | `planpack` | Bootstrap a shared planning pack (graph wiki + comments). Lives in [geocine/planpack](https://github.com/geocine/planpack). |
 

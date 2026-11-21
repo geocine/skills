@@ -6,6 +6,12 @@ long, the structure hard to navigate and the drawings pretty but not explanatory
 for every page is one question: **could a developer on their first day read this page and
 know what to do next?**
 
+These rules are the design-doc case of the **technical-writing** skill (`../technical-writing/`,
+beside this one), which states them for any reference doc and adds before/after examples and
+`scripts/check_text.py`. When that skill is installed, its checker finds most of the text
+problems in the checks at the end of this file: run it on each page's HTML. This file stays
+complete on its own, so the design skill works without it.
+
 ## Names: short, plain, one word per thing
 
 - **A name names the thing. The explanation goes under it.** Page titles and headings are two
