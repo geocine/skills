@@ -29,6 +29,7 @@ npx -y @geocine/skills skill-judge --project
 | `decision-models` | Explain and apply decision models: TypeSafe System One (Jev), classifiers, encoders, and constrained decoding. |
 | `grok-history-traversal` | Traverse Grok CLI session JSONL history and export folder-scoped timeline JSON. |
 | `jira-cookie-automation` | Automate Jira through cookie-backed REST, bootstrapping the cookie from a Chrome DevTools MCP session. |
+| `mcp-switch` | Turn gated MCP servers (such as Blender or Cascadeur) on or off per project, or list which are on. |
 | `muse-windows-installer` | Install and update Meta Muse on Windows through Git Bash with a Windows-safe launcher fallback. |
 | `pi-history-traversal` | Traverse Pi coding-agent session JSONL history, inspect branches and tool results, and export folder-scoped timeline JSON. |
 | `skill-judge` | Test, score, and improve an agent skill before publishing, using subagent runs and a rubric-based judge. |
