@@ -21,11 +21,13 @@ Windows only: the launcher is a `cmd` batch file.
 
 ## Install the launcher
 
-Do this once, when `%USERPROFILE%\.claude\mcp-gate\gate.cmd` doesn't exist.
+Do this when `%USERPROFILE%\.claude\mcp-gate\gate.cmd` is missing or differs
+from this skill's `mcp-gate/gate.cmd` (compare the bytes), so a fixed launcher
+reaches installs too. Updating it never touches `servers\` or `~/.claude.json`.
 
 1. Copy `mcp-gate/gate.cmd` from this skill's directory to
    `%USERPROFILE%\.claude\mcp-gate\gate.cmd`, keeping CRLF line endings.
-2. Create the empty folder `%USERPROFILE%\.claude\mcp-gate\servers\`.
+2. Create the folder, if missing, `%USERPROFILE%\.claude\mcp-gate\servers\`.
 3. `mcp-gate/servers.example/` in this skill holds sample server files
    (blender, cascadeur). They are examples, not installed: gate a server with
    "Gate a new server" below, which writes its file from the user's real
