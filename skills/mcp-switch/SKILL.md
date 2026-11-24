@@ -1,6 +1,6 @@
 ---
 name: mcp-switch
-description: Turn a heavy MCP server (blender, cascadeur, or any other gated one) on or off for the current project, or say which are on. Use when the user says "turn on blender", "enable the cascadeur mcp", "I need blender here", "turn off blender", "disable cascadeur", "which mcps are on", or wants to gate a new MCP server so it only runs in projects that ask for it.
+description: Turn a heavy MCP server (blender, cascadeur, rea, godot, chrome-devtools, or any other gated one) on or off for the current project, or say which are on. Use when the user says "turn on blender", "enable the cascadeur mcp", "I need godot here", "enable rea", "turn on chrome devtools", "turn off blender", "disable cascadeur", "which mcps are on", "set up mcp gate on this computer", or wants to gate a new MCP server so it only runs in projects that ask for it.
 ---
 
 # MCP switch
@@ -11,6 +11,14 @@ launcher starts the real server only when the session's folder (or one of its
 parents) has a file `.claude/mcp-on/<name>`. Anywhere else it exits at once:
 `/mcp` shows the server as failed there, which is expected and harmless, and
 nothing keeps running.
+
+Why: every Claude session starts its own copy of each global server, so with
+many sessions open (for example in terminal multiplexer panes) ungated servers
+pile up. rea (~250 MB), chrome-devtools (3 node processes, ~250 MB) and godot
+(~60 MB) per session are good candidates.
+
+A server that runs through a `.cmd` wrapper (such as `npx.cmd`) needs its full
+`.cmd` path in the server file, since `cmd` won't find `npx.ps1`.
 
 The real command line for each gated server is one file,
 `%USERPROFILE%\.claude\mcp-gate\servers\<name>.cmd`. `%MCP_PROJECT%` there is
@@ -29,9 +37,25 @@ reaches installs too. Updating it never touches `servers\` or `~/.claude.json`.
    `%USERPROFILE%\.claude\mcp-gate\gate.cmd`, keeping CRLF line endings.
 2. Create the folder, if missing, `%USERPROFILE%\.claude\mcp-gate\servers\`.
 3. `mcp-gate/servers.example/` in this skill holds sample server files
-   (blender, cascadeur). They are examples, not installed: gate a server with
+   (blender, cascadeur, rea, godot, chrome-devtools). They are examples, not
+   installed: gate a server with
    "Gate a new server" below, which writes its file from the user's real
    `~/.claude.json` entry.
+
+## Set up on a new computer
+
+When the user asks to set up the gate on this machine (or asks for a gated
+server whose file in `servers\` is missing):
+
+1. Install the launcher (above).
+2. Ask which servers to gate. Offer the names in `mcp-gate/servers.example/`.
+3. For each, make sure it has an entry in `~/.claude.json` `mcpServers`. If it
+   has none, help the user add it with `claude mcp add --scope user <name> ...`.
+   Fill the example's placeholders with this machine's paths (`where node`,
+   `where npx.cmd`, `npm root -g`, the checkout folder), and ask the user for
+   any `env` values the server needs rather than inventing them.
+4. Gate it with "Gate a new server" below.
+5. Ask which projects should have it on, and turn it on there.
 
 ## Turn one on
 
